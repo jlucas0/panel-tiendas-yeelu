@@ -7,9 +7,12 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap-5.3.0-alpha3-dist/css/bootstrap.min.css">
     <style type="text/css">
+        *{
+            box-sizing: border-box;
+        }
         header{
             background-color: #ffc700;
-            padding: 0 10px;
+            padding: 20px 0;
             display: flex;
             justify-content: center;
         }
@@ -33,17 +36,29 @@
 <body>
     <header>
         <div>
-            <img src="Yeelu-white-300.png"/>
+            <img src="Yeelu-white-300.png" @if(Route::current() && Route::current()->getName() != "login") width="150" @endif/>
         </div>
-        @if(Auth::check())
-            <div>
-            </div>
+        @if(Auth::check()||true)
+            <nav class="navbar navbar-expand-lg ms-3">
+              <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                      <a @class(['nav-link','active'=>Route::current() && Route::current()->getName() == "datos"]) href="{{route('datos')}}">Datos</a>
+                    </li>
+                    <li>
+                        <a href="{{route('login')}}" class="btn btn-secondary">Salir</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </nav>
         @endif
     </header>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      Alerta de prueba
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    <x-alerta/>
     {{$slot}}
     <script type="text/javascript" src="vendor/bootstrap-5.3.0-alpha3-dist/js/bootstrap.min.js"></script>
 </body>

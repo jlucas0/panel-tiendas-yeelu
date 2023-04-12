@@ -10,7 +10,7 @@
               <input type="password" class="form-control" name="password" id="password">
             </div>
             <div class="mb-3 text-center">
-              <button type="submir" class="btn btn-primary">Acceder</button>
+              <button type="submit" class="btn btn-primary">Acceder</button>
             </div>
             <div class="text-center">
                 <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#modalRecuperar">Recuperar contraseña</a>

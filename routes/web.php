@@ -13,4 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/acceso','components.acceso')->name("login");
+Route::view('/acceso','acceso')->name("login");
+Route::view('/datos','datos',['provincias'=>App\Models\Provincia::all()])->name("datos");
