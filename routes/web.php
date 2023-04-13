@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/acceso','acceso')->name("login");
-Route::view('/datos','datos',['provincias'=>App\Models\Provincia::all()])->name("datos");
-Route::view('/productos','productos')->name("productos");
-Route::view('/marcas','marcas')->name("marcas");
+Route::view('/acceso','tienda.acceso')->name("login");
+Route::view('/datos','tienda.datos',['provincias'=>App\Models\Provincia::all()])->name("datos");
+Route::view('/productos','productos.lista')->name("productos");
+Route::view('/marcas','marcas.lista')->name("marcas");
+Route::view('/marca','marcas.editar')->name("marca");

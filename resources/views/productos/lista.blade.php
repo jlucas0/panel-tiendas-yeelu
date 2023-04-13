@@ -70,7 +70,7 @@
 				  <tbody>
 				    <tr>
 				      <td><div>1</div></td>
-				      <td><img src="https://www.abc.com.py/resizer/qBj0sYatlbn_zU30HZwmMotrrVA=/arc-anglerfish-arc2-prod-abccolor/public/A3LD3QJRDFEBTD6LAU4L7ZVLNI.jpg"></td>
+				      <td><img class="img-thumbnail" src="https://www.abc.com.py/resizer/qBj0sYatlbn_zU30HZwmMotrrVA=/arc-anglerfish-arc2-prod-abccolor/public/A3LD3QJRDFEBTD6LAU4L7ZVLNI.jpg"></td>
 				      <td><div>Pan</div></td>
 				      <td><div>Panes</div></td>
 				      <td><div>Panista</div></td>
