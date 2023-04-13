@@ -20,7 +20,7 @@
             </div>
             <div class="mb-3">
               <label for="descripcion" class="form-label">Descripción</label>
-              <textarea name="descripcion" class="form-control" id="descripcion" maxlength="150" rows="4"></textarea>
+              <textarea name="descripcion" class="form-control" id="descripcion" rows="4"></textarea>
             </div>
             <div class="mb-3 text-center">
               <button class="btn btn-danger me-4">Borrar</button>
