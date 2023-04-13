@@ -28,9 +28,12 @@
             --bs-btn-disabled-bg: #ffc700;
             --bs-btn-disabled-border-color: #ffc700;
         }
-        .form-control:focus{
+        .form-control:focus,.form-select:focus{
             border-color: #f2d775;
             box-shadow: 0 0 0 0.25rem rgb(255 199 0 / 34%);
+        }
+        .nav-link.active{
+            font-weight: bold;
         }
     </style>
 </head>
@@ -44,10 +47,13 @@
             <div class="d-none d-lg-inline">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
                     <li class="nav-item">
-                    <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "productos"]) href="{{route('productos')}}">Productos</a>
+                        <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "productos"]) href="{{route('productos')}}">Productos</a>
                     </li>
                     <li class="nav-item">
-                    <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "datos"]) href="{{route('datos')}}">Datos</a>
+                        <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "datos"]) href="{{route('datos')}}">Datos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "marcas"]) href="{{route('marcas')}}">Marcas</a>
                     </li>
                 </ul>
                 

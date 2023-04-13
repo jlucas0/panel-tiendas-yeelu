@@ -16,7 +16,7 @@
 </style>
 <x-layout>
 
-	<main class="container-lg">
+	<main class="container-lg pt-3">
 		<h3>Filtros ▼</h3>
 		<div class="row">
 			<div class="col-12 col-sm-4 mb-2">
