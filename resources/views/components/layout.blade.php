@@ -14,7 +14,8 @@
             background-color: #ffc700;
             padding: 20px 0;
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
+            align-items: center;
         }
         .btn-primary{
             --bs-btn-bg: #ffc700;
@@ -39,23 +40,40 @@
             <img src="Yeelu-white-300.png" @if(Route::current() && Route::current()->getName() != "login") width="150" @endif/>
         </div>
         @if(Auth::check()||true)
-            <nav class="navbar navbar-expand-lg ms-3">
+
+            <div class="d-none d-lg-inline">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
+                    <li class="nav-item">
+                    <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "productos"]) href="{{route('productos')}}">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                    <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "datos"]) href="{{route('datos')}}">Datos</a>
+                    </li>
+                </ul>
+                
+            </div>
+            <div>
+                <span class="me-1">Hola, TIENDA</span>
+                <a href="{{route('login')}}" class="btn btn-secondary">Salir</a>
+            </div>
+            <nav class="navbar d-lg-none navbar-expand-lg ms-3">
               <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse" aria-controls="navCollapse" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                      <a @class(['nav-link','active'=>Route::current() && Route::current()->getName() == "datos"]) href="{{route('datos')}}">Datos</a>
-                    </li>
-                    <li>
-                        <a href="{{route('login')}}" class="btn btn-secondary">Salir</a>
-                    </li>
-                  </ul>
+                <div class="collapse navbar-collapse" id="navCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                        <a @class(['nav-link','active'=>Route::current() && Route::current()->getName() == "productos"]) href="{{route('productos')}}">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                        <a @class(['nav-link','active'=>Route::current() && Route::current()->getName() == "datos"]) href="{{route('datos')}}">Datos</a>
+                        </li>
+                    </ul>
+                    
                 </div>
               </div>
-            </nav>
+            </nav>           
         @endif
     </header>
     <x-alerta/>

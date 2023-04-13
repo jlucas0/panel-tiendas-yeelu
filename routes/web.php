@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/acceso','acceso')->name("login");
 Route::view('/datos','datos',['provincias'=>App\Models\Provincia::all()])->name("datos");
+Route::view('/productos','productos')->name("productos");
