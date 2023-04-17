@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::dropIfExists('productos');
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string("codigo",150)->unique();
+            $table->string("codigo",150);
             $table->string("nombre",200);
             $table->smallInteger("peso")->unsigned()->nullable();
             $table->enum("unidad",["gr","kg","l","ml"])->nullable();
@@ -25,7 +25,13 @@ return new class extends Migration
             $table->date("fin_descuento")->nullable();
             $table->text("descripcion")->nullable();
             $table->text("ingredientes")->nullable();
-            $table->text("valores")->nullable();
+            $table->smallInteger("kcal")->unsigned()->nullable();
+            $table->float("grasas")->unsigned()->nullable();
+            $table->float("saturadas")->unsigned()->nullable();
+            $table->float("hidratos")->unsigned()->nullable();
+            $table->float("azucar")->unsigned()->nullable();
+            $table->float("proteinas")->unsigned()->nullable();
+            $table->float("sal")->unsigned()->nullable();
             $table->bigInteger("visitas")->unsigned()->default(0);
             $table->integer("stock")->unsigned()->default(0);
             $table->smallInteger("aviso_stock")->default(0);

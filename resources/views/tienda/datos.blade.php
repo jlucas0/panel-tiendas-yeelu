@@ -23,16 +23,26 @@
               </select>
             </div>
             <div class="mb-3">
-              <label for="foto" class="form-label">Foto</label>
+              <label for="foto" class="form-label">Logo *</label>
               <div class="row">
-                <div class="col-10 offset-1 col-sm-7 offset-sm-0">
-                  <img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg">
+                <div class="col-12 text-center">
+                  <img class="img-fluid" src="https://edicomgroup.es/dam/jcr:1d5f0f0a-a59b-46a0-88e9-3f653ba3fc3c/mercadona_integration.png">
                 </div>
-                <div class="col-6 offset-3 mt-1 mt-sm-0 col-sm-4 offset-sm-1 text-center align-self-center">
-                  <button class="btn btn-danger">Quitar foto actual</button>
+              </div>
+              <input type="file" class="form-control mt-1" name="logo" accept="image/*">
+            </div>
+            <div class="mb-3">
+              <label for="foto" class="form-label">Foto *</label>
+              <div class="row">
+                <div class="col-12">
+                  <img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg">
                 </div>
               </div>
               <input type="file" class="form-control mt-1" name="foto" accept="image/*">
+            </div>
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" name="descripcion" id="descripcion" rows="3"></textarea>
             </div>
             <div class="mb-3">
               <label for="envio" class="form-label">Coste del envío</label>
@@ -51,6 +61,30 @@
             <div class="mb-3">
               <label for="tiempo" class="form-label">Tiempo estimado de entrega</label>
               <input type="text" name="tiempo" class="form-control" id="tiempo" maxlength="30" placeholder="Ej.: 24-48h">
+            </div>
+            <div class="mb-3">
+              <label for="foto" class="form-label">Vídeo</label>
+              <div class="row">
+                <div class="col-10 offset-1 col-sm-7 offset-sm-0">
+                  <video class="img-fluid" controls>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <div class="col-6 offset-3 mt-1 mt-sm-0 col-sm-4 offset-sm-1 text-center align-self-center">
+                  <button class="btn btn-danger">Quitar vídeo actual</button>
+                </div>
+              </div>
+              <input type="file" class="form-control mt-1" name="video" accept="video/mp4">
+            </div>
+            <div class="mb-3">
+              <label for="clave" class="form-label">Nueva contraseña</label>
+              <input type="password" name="clave" class="form-control" minlength="8" id="clave">
+              <p class="form-text">Debe contener al menos 8 caracteres mezclando letras, números y símbolos</p>
+            </div>
+            <div class="mb-3">
+              <label for="confirma" class="form-label">Repite la contraseña</label>
+              <input type="password" name="confirma" class="form-control" id="confirma" minlength="8">
             </div>
             <div class="mb-3 text-center">
               <button type="submit" class="btn btn-primary">Actualizar</button>

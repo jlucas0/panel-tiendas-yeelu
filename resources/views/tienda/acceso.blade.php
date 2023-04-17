@@ -9,6 +9,10 @@
               <label for="password" class="form-label">Clave</label>
               <input type="password" class="form-control" name="password" id="password">
             </div>
+            <div class="mb-3">
+              <input type="checkbox" class="form-check-input" name="remember" id="remember">
+              <label for="remember" class="form-check-label">Mantener sesión iniciada</label>
+            </div>
             <div class="mb-3 text-center">
               <button type="submit" class="btn btn-primary">Acceder</button>
             </div>

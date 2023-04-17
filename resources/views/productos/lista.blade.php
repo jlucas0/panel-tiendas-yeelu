@@ -1,18 +1,12 @@
 <style type="text/css">
-	tbody tr, th.ordenable{
+	th.ordenable{
 		cursor: pointer;
 	}
 	td img{
 		width: 100px;
 	}
 	td{
-		position: relative;
-		overflow: hidden;
-	}
-	td div{
-		position: absolute;
-	    top: 50%;
-	    transform: translateY(-50%);
+		vertical-align: middle;
 	}
 </style>
 <x-layout>
@@ -67,9 +61,11 @@
 				      <th scope="col">Foto</th>
 				      <th scope="col">Nombre</th>
 				      <th scope="col">Precio</th>
+				      <th scope="col">Descuento</th>
 				      <th scope="col">Categoría</th>
 				      <th scope="col">Marca</th>
 				      <th scope="col">Stock</th>
+				      <th scope="col">Activo</th>
 				      <th scope="col">Acciones</th>
 				    </tr>
 				  </thead>
@@ -79,20 +75,35 @@
 				      <td><img class="img-thumbnail" src="https://www.abc.com.py/resizer/qBj0sYatlbn_zU30HZwmMotrrVA=/arc-anglerfish-arc2-prod-abccolor/public/A3LD3QJRDFEBTD6LAU4L7ZVLNI.jpg"></td>
 				      <td><div>Pan</div></td>
 				      <td><div>3 €</div></td>
+				      <td><div><button class="btn btn-primary">Aplicar</button></div></td>
 				      <td><div>Panes</div></td>
 				      <td><div>Nombre de marca muy larga</div></td>
 				      <td><div><span class="badge bg-success">50</span></div></td>
-				      <td><div><button class="btn btn-primary">Aplicar descuento</button></div></td>
+				      <td><div><input type="checkbox" class="form-check-control" checked/></div></td>
+				      <td>
+				      	<div><button class="btn btn-secondary">Editar</button></div>
+			      	</td>
 				    </tr>
 				    <tr>
 				      <th scope="row">1</th>
 				      <td><img src="https://www.abc.com.py/resizer/qBj0sYatlbn_zU30HZwmMotrrVA=/arc-anglerfish-arc2-prod-abccolor/public/A3LD3QJRDFEBTD6LAU4L7ZVLNI.jpg"></td>
 				      <td>Pan</td>
 				      <td><div><s>3</s> 2 € <br> Hasta 30/30/3030</div></td>
+				      <td><div><button class="btn btn-danger">Quitar</button></div></td>
 				      <td>Panes</td>
 				      <td>Panista</td>
 				      <td><span class="badge bg-warning">25</span></td>
-				      <td><div><button class="btn btn-danger">Quitar descuento</button></div></td>
+				      <td><div><input type="checkbox" class="form-check-control" checked/></div></td>
+				      <td>
+				      	<div class="row">
+					      	<div class="col">
+					      		<button class="btn btn-secondary">Editar</button>
+					      	</div>
+					      	<div class="col">
+					      		<button class="btn btn-danger">Quitar descuento</button>
+					      	</div>
+					      </div>
+			      	</td>
 				    </tr>
 				    <tr class="table-warning">
 				      <th scope="row">1</th>
@@ -102,7 +113,17 @@
 				      <td>Panes</td>
 				      <td>Panista</td>
 				      <td><span class="badge bg-danger">5</span></td>
-				      <td><div><button class="btn btn-primary">Aplicar descuento</button></div></td>
+				      <td><div><input type="checkbox" class="form-check-control" checked/></div></td>
+				      <td>
+				      	<div class="row">
+					      	<div class="col">
+					      		<button class="btn btn-secondary">Editar</button>
+					      	</div>
+					      	<div class="col">
+					      		<button class="btn btn-primary">Aplicar descuento</button>
+					      	</div>
+					      </div>
+			      	</td>
 				    </tr>
 				    <tr class="table-secondary" disabled>
 				      <th scope="row">1</th>
@@ -112,6 +133,7 @@
 				      <td>Panes</td>
 				      <td>Panista</td>
 				      <td>-</td>
+				      <td><div><input type="checkbox" class="form-check-control"/></div></td>
 				      <td>-</td>
 				    </tr>
 				  </tbody>

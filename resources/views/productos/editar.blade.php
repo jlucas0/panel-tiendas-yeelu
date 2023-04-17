@@ -1,7 +1,16 @@
+<style type="text/css">
+  img{
+    cursor: pointer;
+  }
+  img.principal{
+    border-color: #f2d775;
+    box-shadow: 0 0 0 0.25rem rgb(255 199 0 / 34%);
+  }
+</style>
 <x-layout>
     <main class="container-lg mt-5">
 		<a href="{{route('productos')}}" class="btn btn-secondary offset-sm-3 mb-5">Volver</a>
-        <form class="col-sm-6 offset-sm-3" method="post" action="#">
+        <form class="col-sm-6 offset-sm-3" method="post" action="#" enctype="multipart/form-data">
             <div class="mb-3">
               <label for="codigo" class="form-label">Código *</label>
               <input type="text" name="codigo" class="form-control" id="codigo" maxlength="150" placeholder="Código único del producto" required>
@@ -31,16 +40,23 @@
               </select>
             </div>
             <div class="mb-3">
-              <label for="foto" class="form-label">Foto</label>
+              <label class="form-label">Fotos</label>
               <div class="row">
-                <div class="col-10 offset-1 col-sm-7 offset-sm-0">
-                	<img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg">
+                <div class="col-6 col-sm-4 col-md-3 mb-1">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg" class="img-thumbnail">
                 </div>
-                <div class="col-6 offset-3 mt-1 mt-sm-0 col-sm-4 offset-sm-1 text-center align-self-center">
-                	<button class="btn btn-danger">Quitar foto actual</button>
+                <div class="col-6 col-sm-4 col-md-3 mb-1">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg" class="img-thumbnail principal" data-bs-toggle="modal" data-bs-target="#modalFoto">
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 mb-1">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg" class="img-thumbnail">
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 mb-1">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg" class="img-thumbnail">
                 </div>
               </div>
-              <input type="file" class="form-control mt-1" name="foto" accept="image/*">
+              <label for="subeFoto">Cargar foto</label>
+              <input type="file" class="form-control mt-1" id="subeFoto" accept="image/*">
             </div>
             <div class="mb-3">
               <label for="descripcion" class="form-label">Descripción</label>
@@ -67,8 +83,53 @@
               <textarea name="ingredientes" class="form-control" id="ingredientes" rows="4"></textarea>
             </div>
             <div class="mb-3">
-              <label for="valores" class="form-label">Valores nutricionales</label>
-              <textarea name="valores" class="form-control" id="valores" rows="4"></textarea>
+              <label for="valores" class="form-label">Valores nutricionales (por cada 100 gr/ml de producto)</label>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>KCAL</td>
+                    <td>
+                      <input type="number" class="form-control" name="kcal" min="0" step="1">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Grasas</td>
+                    <td>
+                      <input type="number" class="form-control" name="grasas" min="0" step="0.01">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Grasas saturadas</td>
+                    <td>
+                      <input type="number" class="form-control" name="saturadas" min="0" step="0.01">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Hidratos de carbono</td>
+                    <td>
+                      <input type="number" class="form-control" name="hidratos" min="0" step="0.01">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Azúcares</td>
+                    <td>
+                      <input type="number" class="form-control" name="azucar" min="0" step="0.01">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Proteínas</td>
+                    <td>
+                      <input type="number" class="form-control" name="proteinas" min="0" step="0.01">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Sal</td>
+                    <td>
+                      <input type="number" class="form-control" name="sal" min="0" step="0.01">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div class="mb-3">
               <div class="row">
@@ -141,4 +202,21 @@
             </div>
         </form>
     </main>
+    <div class="modal" tabindex="-1" id="modalFoto">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="mb-3">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Mercadona_Nuevo_Modelo_de_Tienda4.jpg" class="img-fluid" id="fotoGrande">
+                </div>
+                <div></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger">Borrar</button>
+                <button type="button" class="btn btn-primary">Hacer principal</button>
+            </div>
+        </div>
+      </div>
+    </div>
 </x-layout>

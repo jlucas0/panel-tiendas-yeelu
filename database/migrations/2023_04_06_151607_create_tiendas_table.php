@@ -17,9 +17,12 @@ return new class extends Migration
         Schema::create('tiendas', function (Blueprint $table) {
             $table->id();
             $table->string("nombre",200);
-            $table->string("foto",50)->nullable();
+            $table->string("foto",50);
+            $table->string("logo",50);
+            $table->string("video",50)->nullable();
             $table->string("direccion",200);
             $table->tinyInteger("cp")->unsigned();
+            $table->text("descripcion")->nullable();
             $table->decimal("latitud");
             $table->decimal("longitud");
             $table->boolean("destacada")->default(false);
@@ -27,10 +30,14 @@ return new class extends Migration
             $table->float("envio_gratis")->unsigned()->nullable();
             $table->float("pedido_minimo")->unsigned()->nullable();
             $table->string("tiempo_envio",30)->nullable();
+            $table->string("color1",8)->nullable();
+            $table->string("color2",8)->nullable();
+            $table->string("color3",8)->nullable();
             $table->tinyInteger("accesos_mal")->unsigned()->default(0);
             $table->dateTime("bloqueo_acceso")->nullable();
             $table->smallInteger("provincia_id")->unsigned();
             $table->foreign("provincia_id")->references("codigo")->on("provincias");
+            $table->rememberToken();
             $table->timestamps();
         });
     }
