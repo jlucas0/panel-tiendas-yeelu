@@ -42,7 +42,7 @@
         <div>
             <img src="Yeelu-white-300.png" @if(Route::current() && Route::current()->getName() != "login") width="150" @endif/>
         </div>
-        @if(Auth::check()||true)
+        @if(Auth::check())
 
             <div class="d-none d-lg-inline">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
@@ -59,8 +59,8 @@
                 
             </div>
             <div>
-                <span class="me-1">Hola, TIENDA</span>
-                <a href="{{route('login')}}" class="btn btn-secondary">Salir</a>
+                <span class="me-1">Hola, {{Auth::user()->nombre}}</span>
+                <a href="{{route('logout')}}" class="btn btn-secondary">Salir</a>
             </div>
             <nav class="navbar d-lg-none navbar-expand-lg ms-3">
               <div class="container-fluid">
@@ -85,7 +85,15 @@
             </nav>           
         @endif
     </header>
-    <x-alerta/>
+    @error('warning')
+        <x-alerta tipo="warning" :mensaje="$message"/>
+    @enderror
+    @error('danger')
+        <x-alerta tipo="danger" :mensaje="$message"/>
+    @enderror
+    @error('success')
+        <x-alerta tipo="success" :mensaje="$message"/>
+    @enderror
     {{$slot}}
     <script type="text/javascript" src="vendor/bootstrap-5.3.0-alpha3-dist/js/bootstrap.min.js"></script>
 </body>

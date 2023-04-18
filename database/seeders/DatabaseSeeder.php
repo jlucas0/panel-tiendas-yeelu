@@ -14,6 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([ProvinciasSeeder::class]);
+        $seeders = [ProvinciasSeeder::class];
+        if(config('app.env')!="production"){
+            $seeders[] = TiendasSeeder::class;
+        }
+        $this->call($seeders);
     }
 }
