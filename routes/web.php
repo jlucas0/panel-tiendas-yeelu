@@ -22,8 +22,8 @@ Route::middleware('auth')->group(function(){
 	Route::view('/datos','tienda.datos',['provincias'=>App\Models\Provincia::all()])->name("datos");
 	Route::view('/productos','productos.lista')->name("productos");
 	Route::view('/producto','productos.editar')->name("producto");
-	Route::view('/marcas','marcas.lista')->name("marcas");
-	Route::view('/marca','marcas.editar')->name("marca");
+	Route::get('/marcas',[\App\Http\Controllers\MarcaController::class,'listar'])->name("marcas");
+	Route::get('/marca/{id?}',[\App\Http\Controllers\MarcaController::class,'editar'])->name("marca");
 	Route::post('/guardar-marca',[\App\Http\Controllers\MarcaController::class,'guardar'])->name('guardar-marca');
 	Route::view('/','pedidos.lista')->name("pedidos");
 });

@@ -10,6 +10,17 @@ use Illuminate\Support\Facades\Auth;
 class MarcaController extends Controller
 {
     //
+
+    public function listar(){
+
+        //Marcas de la tienda
+        $marcasTienda = Marca::where('tienda_id',Auth::id())->get();
+        //Marcas generales
+        $marcasYeelu = Marca::where('tienda_id',null)->get();
+
+        return view('marcas.lista',['marcasTienda' => $marcasTienda,'marcasYeelu' => $marcasYeelu]);
+    }
+
     public function guardar(Request $request){
         $valido = $request->validate([
             "nombre" => ["required","string","max:150"],
