@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{config('app.name')}}</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" type="text/css" href="vendor/bootstrap-5.3.0-alpha3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap-5.3.0-alpha3-dist/css/bootstrap.min.css">
     <style type="text/css">
         *{
             box-sizing: border-box;
@@ -40,7 +40,7 @@
 <body>
     <header>
         <div>
-            <img src="Yeelu-white-300.png" @if(Route::current() && Route::current()->getName() != "login") width="150" @endif/>
+            <img src="/Yeelu-white-300.png" @if(Route::current() && Route::current()->getName() != "login") width="150" @endif/>
         </div>
         @if(Auth::check())
 
@@ -95,6 +95,6 @@
         <x-alerta tipo="success" :mensaje="$message"/>
     @enderror
     {{$slot}}
-    <script type="text/javascript" src="vendor/bootstrap-5.3.0-alpha3-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/vendor/bootstrap-5.3.0-alpha3-dist/js/bootstrap.min.js"></script>
 </body>
 </html>

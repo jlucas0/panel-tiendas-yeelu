@@ -18,6 +18,7 @@
 				    <tr>
 				      <th scope="col">Foto</th>
 				      <th scope="col">Nombre</th>
+				      <th scope="col">Productos</th>
 				      <th scope="col">Acción</th>
 				    </tr>
 				  </thead>
@@ -26,6 +27,7 @@
 					    <tr>
 					      <td><img class="img-thumbnail" src="/storage/{{$marca->foto}}"></td>
 					      <td>{{$marca->nombre}}</td>
+					      <td>{{count($marca->productos)}}</td>
 					      <td><a class="btn btn-secondary" href="{{route('marca',['id'=>$marca->id])}}">Editar</a></td>
 					    </tr>
 				    @endforeach
