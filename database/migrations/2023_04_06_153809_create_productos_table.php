@@ -36,8 +36,8 @@ return new class extends Migration
             $table->integer("stock")->unsigned()->default(0);
             $table->smallInteger("aviso_stock")->default(0);
             $table->boolean("disponible");
-            $table->foreignId("marcas")->constrained();
-            $table->foreignId("categorias")->constrained();
+            $table->foreignId("marca_id")->constrained();
+            $table->foreignId("categoria_id")->constrained();
             $table->timestamps();
         });
     }

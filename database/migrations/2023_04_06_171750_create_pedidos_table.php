@@ -22,8 +22,8 @@ return new class extends Migration
             $table->boolean("completado")->default(false);
             $table->text("observaciones")->nullable();
             $table->enum("estado",['pendiente','aceptado','preparado','enviado','entregado'])->nullable();
-            $table->foreignId("clientes")->constrained();
-            $table->foreignId("tiendas")->constrained();
+            $table->foreignId("cliente_id")->constrained();
+            $table->foreignId("tienda_id")->constrained();
             $table->timestamps();
         });
     }

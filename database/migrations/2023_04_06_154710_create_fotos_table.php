@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean("principal")->default(false);
             $table->string("direccion",50);
             $table->string("descripcion",250)->nullable();
-            $table->foreignId("productos")->constrained();
+            $table->foreignId("producto_id")->constrained();
             $table->timestamps();
         });
     }

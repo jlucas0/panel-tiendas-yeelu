@@ -17,9 +17,9 @@ return new class extends Migration
         Schema::create('marcas', function (Blueprint $table) {
             $table->id();
             $table->string("nombre",150);
-            $table->string("foto",10)->nullable();
+            $table->string("foto",100)->nullable();
             $table->text("descripcion")->nullable();
-            $table->foreignId("tiendas")->constrained()->nullable();
+            $table->foreignId("tienda_id")->nullable()->constrained();
             $table->timestamps();
         });
     }

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->smallInteger("cantidad")->unsigned();
             $table->float("precio_ud")->unsigned();
             $table->float("descuento")->unsigned()->nullable();
-            $table->foreignId("pedidos")->constrained();
-            $table->foreignId("productos")->constrained();
+            $table->foreignId("pedido_id")->constrained();
+            $table->foreignId("producto_id")->constrained();
             $table->timestamps();
         });
     }

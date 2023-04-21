@@ -22,7 +22,7 @@ return new class extends Migration
             $table->smallInteger("cp")->unsigned();
             $table->string("ciudad",200);
             $table->string("nif",15)->nullable();
-            $table->foreignId("pedidos")->constrained();
+            $table->foreignId("pedido_id")->constrained();
             $table->timestamps();
         });
     }

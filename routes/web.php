@@ -24,5 +24,6 @@ Route::middleware('auth')->group(function(){
 	Route::view('/producto','productos.editar')->name("producto");
 	Route::view('/marcas','marcas.lista')->name("marcas");
 	Route::view('/marca','marcas.editar')->name("marca");
+	Route::post('/guardar-marca',[\App\Http\Controllers\MarcaController::class,'guardar'])->name('guardar-marca');
 	Route::view('/','pedidos.lista')->name("pedidos");
 });
