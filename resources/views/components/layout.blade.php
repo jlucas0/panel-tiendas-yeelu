@@ -87,12 +87,18 @@
     </header>
     @error('warning')
         <x-alerta tipo="warning" :mensaje="$message"/>
-    @enderror
-    @error('danger')
-        <x-alerta tipo="danger" :mensaje="$message"/>
-    @enderror
-    @error('success')
-        <x-alerta tipo="success" :mensaje="$message"/>
+    @else
+        @error('danger')
+            <x-alerta tipo="danger" :mensaje="$message"/>
+        @else
+            @error('success')
+                <x-alerta tipo="success" :mensaje="$message"/>
+            @else
+                @if($errors->any())
+                    <x-alerta tipo="warning" mensaje="Se ha producido algún error"/>
+                @endif
+            @enderror
+        @enderror
     @enderror
     {{$slot}}
     <script type="text/javascript" src="/vendor/bootstrap-5.3.0-alpha3-dist/js/bootstrap.min.js"></script>

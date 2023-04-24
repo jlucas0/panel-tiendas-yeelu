@@ -9,6 +9,8 @@ use App\Models\Tienda;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Aviso;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 
 class TiendaController extends Controller
 {
@@ -61,8 +63,7 @@ class TiendaController extends Controller
         }
 
     }
-    public function salir(Request $request)
-    {
+    public function salir(Request $request){
         Auth::logout();
 
         $request->session()->invalidate();
@@ -70,6 +71,70 @@ class TiendaController extends Controller
         $request->session()->regenerateToken();
 
         return redirect(route('login'));
+    }
+
+    public function modificar(Request $request){
+        if($request->isMethod('post')){
+            $valido = $request->validate([
+                "foto" => ["image","nullable","max:8192"],
+                "logo" => ["image","nullable","max:4096"],
+                "envio" => ["nullable","numeric","min:0"],
+                "gratis" => ["nullable","numeric","min:0"],
+                "tiempo" => ["nullable","max:30"],
+                "video" => ["nullable","max:51200","mimetypes:video/avi,video/mpeg,video/mp4"],
+                "clave" => ["nullable","confirmed",Password::min(8)->letters()->numbers()->symbols()],
+            ],[
+                'foto.image' => 'Debe ser de un formato de imagen válido',
+                'logo.image' => 'Debe ser de un formato de imagen válido',
+                'foto.max' => 'El tamaño máximo es de 8MB',
+                'logo.max' => 'El tamaño máximo es de 4MB',
+                'envio.numeric' => 'Debe ser un número válido',
+                'envio.min' => 'Debe ser positivo',
+                'gratis.numeric' => 'Debe ser un número válido',
+                'gratis.min' => 'Debe ser positivo',
+                'tiempo.max' => 'Máximo 30 caracteres',
+                'video.max' => 'Máximo 50MB',
+                'video.mimetypes' => 'Debe ser formato AVI, MPEG o MP4'
+
+            ]);
+            try{
+                $tienda = Tienda::find(Auth::id());
+
+                if(isset($valido['foto']) && $tienda->foto && Storage::disk('public')->exists($tienda->foto)){
+                    Storage::disk('public')->delete($tienda->foto);
+                }
+                if(isset($valido['foto'])){
+                    $tienda->foto = $request->file('foto')->store('tiendas','public');
+                }
+                if(isset($valido['logo']) && $tienda->logo && Storage::disk('public')->exists($tienda->logo)){
+                    Storage::disk('public')->delete($tienda->logo);
+                }
+                if(isset($valido['logo'])){
+                    $tienda->logo = $request->file('logo')->store('tiendas','public');
+                }
+                $tienda->descripcion = $request->descripcion;
+                $tienda->coste_envio = $request->envio;
+                $tienda->envio_gratis = $request->gratis;
+                $tienda->tiempo_envio = $request->tiempo;
+                if((isset($valido['video']) && $tienda->video && Storage::disk('public')->exists($tienda->video))||(!isset($valido['video']) && $request->borravideo=="si")){
+                    Storage::disk('public')->delete($tienda->video);
+                    $tienda->video = null;
+                }
+                if(isset($valido['video'])){
+                    $tienda->video = $request->file('video')->store('tiendas','public');
+                }
+                if(isset($valido['clave'])){
+                    $tienda->password = Hash::make($valido['clave']);
+                }
+                $tienda->save();
+                return redirect('datos')->withErrors(['success' => "Datos actualizados"]);
+            }catch(\Exception $e){
+                return back()->withErrors([
+                    'danger' => 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"")
+                ]);
+            }
+        }
+        return view('tienda.datos',["tienda"=>Tienda::find(Auth::id())]);
     }
 
     //Funciones Ajax

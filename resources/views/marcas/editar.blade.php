@@ -27,7 +27,7 @@
               	<button class="btn btn-danger">Quitar foto actual</button>
               </div>-->
             </div>
-            <input type="file" class="form-control mt-1 @error('foto') is-invalid @enderror"" name="foto" accept="image/*" id="foto">
+            <input type="file" class="form-control mt-1 @error('foto') is-invalid @enderror" name="foto" accept="image/*" id="foto">
             <div class="invalid-feedback">
               @error('foto'){{$message}}@enderror
             </div>

@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string("nombre",200);
-            $table->string("foto",50);
-            $table->string("logo",50);
-            $table->string("video",50)->nullable();
+            $table->string("foto",100);
+            $table->string("logo",100);
+            $table->string("video",100)->nullable();
             $table->string("direccion",200);
             $table->smallInteger("cp")->unsigned();
             $table->text("descripcion")->nullable();

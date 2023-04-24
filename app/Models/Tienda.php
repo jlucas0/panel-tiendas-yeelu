@@ -11,4 +11,8 @@ class Tienda extends User
     protected $casts = [
         'bloqueo_acceso' => 'datetime'
     ];
+
+    public function provincia(){
+        return $this->belongsTo(Provincia::class,'provincia_id','codigo');
+    }
 }
