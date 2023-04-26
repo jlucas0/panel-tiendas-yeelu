@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{config('app.name')}}</title>
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/vendor/bootstrap-5.3.0-alpha3-dist/css/bootstrap.min.css">
     <style type="text/css">
         *{
@@ -46,6 +46,9 @@
 
             <div class="d-none d-lg-inline">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
+                    <li class="nav-item">
+                        <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "pedidos"]) href="{{route('pedidos')}}">Pedidos</a>
+                    </li>
                     <li class="nav-item">
                         <a @class(['nav-link','p-3','active'=>Route::current() && Route::current()->getName() == "productos"]) href="{{route('productos')}}">Productos</a>
                     </li>

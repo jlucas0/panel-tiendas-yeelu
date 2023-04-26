@@ -20,11 +20,25 @@ Route::post('/recuperar-clave',[\App\Http\Controllers\TiendaController::class,'r
 Route::middleware('auth')->group(function(){
 	Route::any('/logout',[\App\Http\Controllers\TiendaController::class,'salir'])->name("logout");
 	Route::match(['get','post'],'/datos',[\App\Http\Controllers\TiendaController::class,'modificar'])->name("datos");
-	Route::view('/productos','productos.lista')->name("productos");
-	Route::view('/producto','productos.editar')->name("producto");
-	Route::get('/marcas',[\App\Http\Controllers\MarcaController::class,'listar'])->name("marcas");
-	Route::get('/marca/{id?}',[\App\Http\Controllers\MarcaController::class,'editar'])->name("marca");
-	Route::get('/marca/borrar/{id}',[\App\Http\Controllers\MarcaController::class,'borrar'])->name("borrar-marca");
-	Route::post('/guardar-marca',[\App\Http\Controllers\MarcaController::class,'guardar'])->name('guardar-marca');
-	Route::view('/','pedidos.lista')->name("pedidos");
+	
+	Route::prefix('/productos')->group(function(){
+		Route::view('/','productos.lista')->name("productos");
+		Route::get('/crear',[\App\Http\Controllers\ProductoController::class,'crear'])->name("crear-producto");
+		Route::post('/guardar',[\App\Http\Controllers\ProductoController::class,'guardar'])->name("guardar-producto");
+
+	});
+	
+	Route::prefix('/marcas')->group(function(){
+		Route::get('/',[\App\Http\Controllers\MarcaController::class,'listar'])->name("marcas");
+		Route::get('/modificar/{id?}',[\App\Http\Controllers\MarcaController::class,'editar'])->name("marca");
+		Route::get('/borrar/{id}',[\App\Http\Controllers\MarcaController::class,'borrar'])->name("borrar-marca");
+		Route::post('/guardar',[\App\Http\Controllers\MarcaController::class,'guardar'])->name('guardar-marca');
+	});
+	
+	Route::prefix('/pedidos')->group(function(){
+		Route::view('/','pedidos.lista')->name("pedidos");
+	});
+	Route::redirect('/', '/pedidos');
+
+
 });
