@@ -19,7 +19,7 @@
 				      <td>26/04/2023 18:08</td>
 				      <td>80 €</td>
 				      <td><span class="badge bg-secondary">Pendiente</span></td>
-				      <td><button class="btn btn-info">Revisar</button></td>
+				      <td><a href="{{route('pedido',['id'=>1])}}" class="btn btn-info">Revisar</a></td>
 				    </tr>
 				    <tr>
 				      <td>28</td>

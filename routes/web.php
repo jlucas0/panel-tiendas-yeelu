@@ -36,7 +36,8 @@ Route::middleware('auth')->group(function(){
 	});
 	
 	Route::prefix('/pedidos')->group(function(){
-		Route::view('/','pedidos.lista')->name("pedidos");
+		Route::get('/',[\App\Http\Controllers\PedidoController::class,'listar'])->name("pedidos");
+		Route::get('/{id}',[\App\Http\Controllers\PedidoController::class,'ver'])->name("pedido");
 	});
 	Route::redirect('/', '/pedidos');
 
