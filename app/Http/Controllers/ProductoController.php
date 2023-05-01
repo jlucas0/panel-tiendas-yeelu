@@ -168,4 +168,13 @@ class ProductoController extends Controller
         }
     
     }
+
+    public function listar(){
+
+        $referencias = Referencia::with(['producto','producto.fotos'=>function ($query) {
+            $query->where('principal', 1);
+        },'producto.subsubcategoria.subcategoria','producto.marca'])->where('tienda_id',Auth::id())->get();
+
+        return view('productos.lista',["referencias"=>$referencias]);
+    }
 }

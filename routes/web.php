@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function(){
 	Route::match(['get','post'],'/datos',[\App\Http\Controllers\TiendaController::class,'modificar'])->name("datos");
 	
 	Route::prefix('/productos')->group(function(){
-		Route::view('/','productos.lista')->name("productos");
+		Route::get('/',[\App\Http\Controllers\ProductoController::class,'listar'])->name("productos");
 		Route::get('/crear',[\App\Http\Controllers\ProductoController::class,'crear'])->name("crear-producto");
 		Route::post('/guardar',[\App\Http\Controllers\ProductoController::class,'guardar'])->name("guardar-producto");
 
