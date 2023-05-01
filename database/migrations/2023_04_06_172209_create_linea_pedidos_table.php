@@ -20,7 +20,7 @@ return new class extends Migration
             $table->float("precio_ud")->unsigned();
             $table->float("descuento")->unsigned()->nullable();
             $table->foreignId("pedido_id")->constrained();
-            $table->foreignId("producto_id")->constrained();
+            $table->foreignId("referencia_id")->constrained();
             $table->timestamps();
         });
     }

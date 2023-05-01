@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::dropIfExists('productos_carrito');
         Schema::create('productos_carrito', function (Blueprint $table) {
-            $table->bigInteger("producto_id")->unsigned();
+            $table->bigInteger("referencia_id")->unsigned();
             $table->bigInteger("cliente_id")->unsigned();
-            $table->foreign("producto_id")->references("id")->on("productos");
+            $table->foreign("referencia_id")->references("id")->on("referencias");
             $table->foreign("cliente_id")->references("id")->on("clientes");
-            $table->primary(["producto_id","cliente_id"]);
+            $table->primary(["referencia_id","cliente_id"]);
             $table->smallInteger("unidades")->unsigned()->default(1);
         });
     }

@@ -29,10 +29,11 @@ Route::middleware('auth')->group(function(){
 	});
 	
 	Route::prefix('/marcas')->group(function(){
-		Route::get('/',[\App\Http\Controllers\MarcaController::class,'listar'])->name("marcas");
+		/*Route::get('/',[\App\Http\Controllers\MarcaController::class,'listar'])->name("marcas");
 		Route::get('/modificar/{id?}',[\App\Http\Controllers\MarcaController::class,'editar'])->name("marca");
 		Route::get('/borrar/{id}',[\App\Http\Controllers\MarcaController::class,'borrar'])->name("borrar-marca");
-		Route::post('/guardar',[\App\Http\Controllers\MarcaController::class,'guardar'])->name('guardar-marca');
+		Route::post('/guardar',[\App\Http\Controllers\MarcaController::class,'guardar'])->name('guardar-marca');*/
+		Route::post('/registrar',[\App\Http\Controllers\MarcaController::class,'crear'])->name('crear-marca');
 	});
 	
 	Route::prefix('/pedidos')->group(function(){

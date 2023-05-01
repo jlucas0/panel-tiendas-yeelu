@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('subcategorias', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre",80)->unique();
-            $table->string("icono",50)->nullable();
+            $table->string("nombre",60)->unique();
+            $table->foreignId("categoria_id")->constrained();
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('subsubcategorias');
     }
 };

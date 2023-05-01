@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Marca;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class MarcaController extends Controller
 {
@@ -88,4 +89,56 @@ class MarcaController extends Controller
             return redirect('marcas')->withErrors(["success"=>"Marca borrada"]);
         }
     }
+
+    //Fúnción para AJAX
+    public function crear(Request $request){
+        $respuesta = ["resultado"=>1,"mensaje"=>"ok"];
+        
+
+        $validator = Validator::make($request->all(), [
+            "nombre" => ["required","string","max:150"],
+            "foto" => ["image","nullable","max:8192"],
+        ],[
+            'nombre.required' => 'El nombre es obligatorio',
+            'nombre.string' => 'El nombre debe ser un texto válido',
+            'nombre.max' => 'El nombre es demasiado largo',
+            'foto.image' => 'La foto debe ser de un formato de imagen válido',
+            'foto.max' => 'El tamaño máximo de la foto es de 8MB'
+        ]);
+ 
+        if ($validator->fails()) {
+            $respuesta["resultado"] = 0;
+            $respuesta["mensaje"] = "Debes corregir los siguientes errores:";
+            foreach($validator->errors()->all() as $error){
+                $respuesta["mensaje"] .= "<br>$error";
+            }
+        }
+        else{
+            try{
+                $valido = $validator->validated();
+                $marca = new Marca();
+                $marca->nombre = $request->nombre;
+                if(isset($valido['foto'])){
+                    $marca->foto = $request->file('foto')->store('marcas','public');
+                }
+                $marca->descripcion = $request->descripcion;
+                $marca->tienda_id = Auth::id();
+                $marca->save();
+                $respuesta["mensaje"] = $marca->id;
+            }catch(\Exception $e){
+                if (Storage::disk('public')->exists($marca->foto)) {
+                    Storage::disk('public')->delete($marca->foto);
+                }
+                $respuesta["mensaje"] = 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"");
+                $respuesta["resultado"] = 0;
+            }
+
+        }
+
+
+
+        return response()->json($respuesta);
+    }
+
+    
 }

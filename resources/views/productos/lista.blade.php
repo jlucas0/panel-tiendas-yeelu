@@ -51,7 +51,7 @@
 		</div>
 		<div class="mt-3">
 			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDescuento">Aplicar descuento a listados</button>
-			<a href="{{route('producto')}}" class="btn btn-success">Nuevo Producto</a>
+			<a href="{{route('crear-producto')}}" class="btn btn-success">Nuevo Producto</a>
 		</div>
 		<div class="table-responsive mt-5">
 			<table class="table table-hover table-striped table-success">

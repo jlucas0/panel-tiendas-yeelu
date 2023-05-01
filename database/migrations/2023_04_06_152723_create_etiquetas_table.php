@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string("nombre",50)->unique();
             $table->string("icono",50);
-            $table->foreignId("grupo_etiquetas_id")->constrained();
+            $table->foreignId("grupo_etiqueta_id")->constrained();
         });
     }
 
