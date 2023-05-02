@@ -1,7 +1,4 @@
 <style type="text/css">
-	th.ordenable{
-		cursor: pointer;
-	}
 	td img{
 		width: 100px;
 	}
@@ -22,6 +19,19 @@
 		overflow: hidden;
 		height: 0;
 		transition: all ease-in 0.3s;
+	}
+	.ordenable{
+		cursor: pointer;
+		white-space: nowrap;
+	}
+	.ordenable::after{
+		content: ' -';
+	}
+	.ordenable.asc::after{
+		content: ' ▲';
+	}
+	.ordenable.desc::after{
+		content: ' ▼';
 	}
 </style>
 <x-layout>
@@ -74,14 +84,15 @@
 			<table class="table table-hover">
 				<thead>
 				    <tr>
-				      <th scope="col" class="ordenable">Código ▲</th>
+				      <th scope="col" class="ordenable" data-campo="codigo">Código</th>
 				      <th scope="col">Foto</th>
-				      <th scope="col">Nombre</th>
-				      <th scope="col">Precio</th>
-				      <th scope="col">Descuento</th>
-				      <th scope="col">Categoría</th>
-				      <th scope="col">Marca</th>
-				      <th scope="col">Activo</th>
+				      <th scope="col" class="ordenable" data-campo="nombre">Nombre</th>
+				      <th scope="col" class="ordenable" data-campo="precio">Precio</th>
+				      <th scope="col" class="ordenable" data-campo="tieneDescuento">Descuento</th>
+				      <th scope="col" class="ordenable" data-campo="categoria">Categoría</th>
+				      <th scope="col" class="ordenable" data-campo="marca">Marca</th>
+				      <th scope="col" class="ordenable" data-campo="visitas">Visitas</th>
+				      <th scope="col" class="ordenable" data-campo="estado">Activo</th>
 				      <th scope="col">Acciones</th>
 				    </tr>
 				  </thead>
@@ -95,27 +106,28 @@
       <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <div class="mb-3">
-                  <label for="descuento" class="form-label">Descuento</label>
-                  <div class="row">
-                  	<div class="col-9">
-                  		<input type="number" class="form-control" id="descuento" placeholder="Cantidad" step="0.01">
-                  	</div>
-                  	<div class="col-3">
-                  		<select id="tipoDescuento" class="form-select col-2"><option val="por">%</option><option val="pre">€</option></select>
-                  	</div>
-                  </div>
+            	<div class="alert alert-danger" style="display:none" id="alertaDescuento"></div>
+              <div class="mb-3">
+                <label for="descuento" class="form-label">Descuento</label>
+                <div class="row">
+                	<div class="col-9">
+                		<input type="number" class="form-control" id="descuento" placeholder="Cantidad" step="0.01">
+                	</div>
+                	<div class="col-3">
+                		<select id="tipoDescuento" class="form-select col-2"><option value="por">%</option><option value="pre">€</option></select>
+                	</div>
                 </div>
-                <div class="mb-3">
-                  <label for="descuento" class="form-label">Fecha fin</label>
-                  <input type="date" class="form-control" name="fecha" id="fecha">
-                  <div class="form-text">Fecha de fin (incluida). Sin fecha, el descuento será permanente hasta que se cancele manualmente.</div>
-              	</div>
-              	<h4>Precio final: XXX</h4>
+              </div>
+              <div class="mb-3">
+                <label for="descuento" class="form-label">Fecha fin</label>
+                <input type="date" class="form-control" name="fecha" id="fecha">
+                <div class="form-text">Fecha de fin (incluida). Sin fecha, el descuento será permanente hasta que se cancele manualmente.</div>
+            	</div>
+            	<h4>Precio final: <span id="precioFinal">XXX</span></h4>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Aplicar</button>
+                <button type="button" id="botonDescuento" class="btn btn-primary" disabled>Aplicar</button>
             </div>
         </div>
       </div>
@@ -137,7 +149,7 @@
 	//Cargar datos
 	let datos = [
 		@foreach($referencias as $referencia)
-			{"id":{{$referencia->id}},"codigo":"{{$referencia->codigo}}","foto":"@if(count($referencia->producto->fotos)){{$referencia->producto->fotos[0]->direccion}}@endif","nombre":"{{$referencia->producto->nombre}}","precio":{{$referencia->precio}},"descuento":@if($referencia->descuento){{$referencia->descuento}}@else""@endif,"finDescuento":"{{$referencia->fin_descuento}}","categoria":"{{$referencia->producto->subsubcategoria->subcategoria->nombre.' - '.$referencia->producto->subsubcategoria->nombre}}","marca":"{{$referencia->producto->marca->nombre}}","estado":@if($referencia->disponible && $referencia->producto->confirmado){{1}}@elseif($referencia->disponible && !$referencia->producto->confirmado){{-1}}@else{{0}}@endif},
+			{"id":{{$referencia->id}},"codigo":"{{$referencia->codigo}}","foto":"@if(count($referencia->producto->fotos)){{$referencia->producto->fotos[0]->direccion}}@endif","nombre":"{{$referencia->producto->nombre}}","precio":{{$referencia->precio}},"descuento":@if($referencia->descuento){{$referencia->descuento}}@else""@endif,"tieneDescuento":@if($referencia->descuento){{1}}@else{{0}}@endif,"finDescuento":"{{$referencia->fin_descuento}}","categoria":"{{$referencia->producto->subsubcategoria->subcategoria->nombre.' - '.$referencia->producto->subsubcategoria->nombre}}","marca":"{{$referencia->producto->marca->nombre}}","estado":@if($referencia->disponible && $referencia->producto->confirmado){{1}}@elseif($referencia->disponible && !$referencia->producto->confirmado){{-1}}@else{{0}}@endif,"visitas":{{$referencia->visitas}}},
 		@endforeach
 	];
 	let datosVisibles = [];
@@ -190,10 +202,63 @@
 	
 	//Ordenar tabla
 
+	var campoOrdenar, direccionOrdenar;
+
+	for(let header of document.getElementsByClassName('ordenable')){
+		header.onclick = ordenarTabla;
+	}
+
+	function ordenarTabla(evento){
+		direccionOrdenar = 1;
+		//Si está descendente, ponerlo ascendente
+		if(evento.target.classList.contains('desc')){
+			evento.target.classList.remove('desc');
+			evento.target.classList.add('asc');
+			direccionOrdenar = -1;
+			campoOrdenar = evento.target.dataset.campo;
+		}
+		//Si está ascendente, quitar el orden
+		else if(evento.target.classList.contains('asc')){
+			evento.target.classList.remove('asc');
+			campoOrdenar = 'id';
+		}
+		//Si está sin ordenar, ponerlo descendente
+		else{
+			//Quitar las clases de las demás
+			for(let header of document.getElementsByClassName('ordenable')){
+				header.classList.remove('asc');
+				header.classList.remove('desc');
+			}
+			evento.target.classList.add('desc');
+			campoOrdenar = evento.target.dataset.campo;
+		}
+		
+		datos.sort(comparador);
+		pintarTabla();
+	}
+
+	function comparador( el1, el2 ) {
+		let resultado = 0;
+		let dato1 = el1[campoOrdenar];
+		let dato2 = el2[campoOrdenar];
+		if(typeof dato1 == "string"){
+			dato1 = dato1.toUpperCase();
+			dato2 = dato2.toUpperCase();
+		}
+	  if ( dato1 < dato2 ){
+	    resultado = -1 * direccionOrdenar;
+	  }
+	  else if ( dato1 > dato2 ){
+	    resultado = 1 * direccionOrdenar;
+	  }
+	  return resultado;
+	}
+
 	//Pintar datos
 	function pintarTabla(){
 		aplicarFiltros();
 		tabla.innerHTML = "";
+		let indice = 0;
 		for(let producto of datosVisibles){
 			let fila = document.createElement("tr");
 			if(producto.estado == 1){
@@ -246,6 +311,8 @@
       }else{
       	botonDescuento.classList.add("btn-primary");
       	botonDescuento.innerText = "Aplicar";
+      	botonDescuento.dataset.indice = indice;
+      	botonDescuento.onclick = abrirModalDescuento;
       }
       if(producto.estado == 1){
       	celdaDescuento.append(botonDescuento);
@@ -260,6 +327,9 @@
       celdaMarca.innerText = producto.marca;
       fila.append(celdaMarca);
 
+      let celdaVisitas = document.createElement("td");
+      celdaVisitas.innerText = producto.visitas;
+      fila.append(celdaVisitas);
 
       let celdaEstado = document.createElement("td");
       let checkEstado = document.createElement("input");
@@ -268,13 +338,15 @@
       if(producto.estado == 1){
 				checkEstado.checked = true;
 				celdaEstado.append(checkEstado);				
-			}else if(producto.estado==-1){
+			}
+			else if(producto.estado==-1){
 				let badge = document.createElement("span");
 				badge.classList.add("badge");
 				badge.classList.add("bg-warning");
 				badge.innerText = "Pendiente aprobación";
 				celdaEstado.append(badge);
-			}else{
+			}
+			else{
 				celdaEstado.append(checkEstado);				
 			}
 			fila.append(celdaEstado);
@@ -288,11 +360,98 @@
 			fila.append(celdaAccion);
 
 			tabla.append(fila);
+			indice++;
 		}
 	}
 
 	pintarTabla();
+
 	//Aplicar descuentos individuales
+	modalDescuento = new bootstrap.Modal(modalDescuento);
+
+	var productoSeleccionado;
+	var valorPrecioFinal;
+	var precioDescuento;
+	function abrirModalDescuento(evento){
+		productoSeleccionado = datosVisibles[evento.target.dataset.indice];
+		valorPrecioFinal = productoSeleccionado.precio;
+		precioDescuento = 0;
+		descuento.value = "";
+		tipoDescuento.value = "por";
+		fecha.value = "";
+		precioFinal.parentElement.style.display = "block";
+		precioFinal.innerText = valorPrecioFinal + " €";
+		modalDescuento.toggle();
+	}
+
+	descuento.oninput = calcularDescuento;
+	tipoDescuento.onchange = calcularDescuento;
+	botonDescuento.onclick = aplicarDescuento;
+
+	function calcularDescuento(){
+		precioDescuento = descuento.value;
+		if(tipoDescuento.value == "por"){
+			precioDescuento = productoSeleccionado.precio - (productoSeleccionado.precio - (productoSeleccionado.precio*precioDescuento/100));
+		}
+		valorPrecioFinal = productoSeleccionado.precio - precioDescuento;
+		valorPrecioFinal = valorPrecioFinal.toFixed(2);
+		precioFinal.innerText = valorPrecioFinal + " €";
+		if(valorPrecioFinal<=0 || precioDescuento==0){
+			botonDescuento.disabled = true;
+		}else{
+			botonDescuento.disabled = false;
+		}
+	}
+
+	function aplicarDescuento(){
+		botonDescuento.disabled = true;
+		//Enviar los datos
+		
+		postData().then((data)=>{
+      botonDescuento.disabled = false;
+      //Si es OK, cerrar el modal y borrar los datos
+      if(data.resultado){
+        //Actualizar el producto seleccionado en la tabla
+        for(let i = 0; i < datos.length; i++){
+        	if(datos[i].id == productoSeleccionado.id){
+        		datos[i].descuento = precioDescuento;
+        		datos[i].tieneDescuento = 1;
+        		datos[i].finDescuento = fecha.value;
+        		break;
+        	}
+        }
+        //Repintar la tabla
+        pintarTabla();
+        modalDescuento.toggle();
+      }
+      //Si no, pintar alert de error
+      else{
+        alertaDescuento.style.display = "block";
+        alertaDescuento.innerHTML = data.mensaje;
+      }
+
+    });
+	}
+
+	async function postData(){
+    //Leer los datos
+    var formData = new FormData();
+    formData.append('id', productoSeleccionado.id);
+    formData.append('descuento', precioDescuento);
+    if(fecha.value){
+      formData.append('fecha', fecha.value);
+    }
+    formData.append('_token', '{{csrf_token()}}');
+    //Enviar el post
+    const response = await fetch('{{route('aplicar-descuento')}}', {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      body: formData, // body data type must match "Content-Type" header
+    });
+    return response.json();
+  }
+
+	//Quitar descuento
 	//Aplicar descuentos masivos
+
 	//Activar/Desactivar producto
 </script>

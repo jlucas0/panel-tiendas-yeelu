@@ -11,6 +11,7 @@ use App\Models\Foto;
 use App\Models\GrupoEtiqueta;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class ProductoController extends Controller
 {
@@ -169,6 +170,8 @@ class ProductoController extends Controller
     
     }
 
+    //EDITAR con descuento
+
     public function listar(){
 
         $referencias = Referencia::with(['producto','producto.fotos'=>function ($query) {
@@ -177,5 +180,67 @@ class ProductoController extends Controller
         $marcas = DB::table('marcas')->join('productos','marcas.id','=','productos.marca_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('marcas.nombre')->orderBy('marcas.nombre','asc')->groupBy('marcas.nombre')->get();
         $categorias = DB::table('subsubcategorias')->join('subcategorias','subcategorias.id','=','subsubcategorias.subcategoria_id')->join('productos','subsubcategorias.id','=','productos.subsubcategoria_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('subsubcategorias.nombre as subsubcategoria','subcategorias.nombre as subcategoria')->orderBy('subcategorias.nombre','asc')->groupBy('subsubcategorias.nombre')->get();
         return view('productos.lista',["referencias"=>$referencias,"marcas" => $marcas,"categorias" => $categorias]);
+    }
+
+    //Funciones AJAX
+    public function aplicarDescuento(Request $request){
+        $respuesta = ["resultado"=>1,"mensaje"=>"ok"];
+        
+
+        $validator = Validator::make($request->all(), [
+            "id" => ["required","exists:referencias,id"],
+            "descuento" => ["required","numeric","min:0.01"],
+            "fecha" => ["nullable","date"],
+        ],[
+            'id.required' => 'No se ha especificado el producto',
+            'id.exists' => 'No se ha encontrado el producto',
+            'descuento.required' => 'No se ha indicado el descuento',
+            'descuento.numeric' => 'El importe no es un número válido',
+            'descuento.min' => 'El descuento es demasiado bajo',
+            'fecha.date' => 'La fecha no tiene un formato válido',
+        ]);
+ 
+        if ($validator->fails()) {
+            $respuesta["resultado"] = 0;
+            $respuesta["mensaje"] = "Debes corregir los siguientes errores:";
+            foreach($validator->errors()->all() as $error){
+                $respuesta["mensaje"] .= "<br>$error";
+            }
+        }
+        else{
+            try{
+                $valido = $validator->validated();
+                $referencia = Referencia::find($valido['id']);
+                //Validar además que fecha sea mayor a hoy y descuento menor a precio base del producto
+                if(isset($valido["fecha"])){
+                    $hoy = new \DateTime();
+                    $fechaFin = new \DateTime($valido["fecha"]);
+                    if($fechaFin<$hoy){
+                        $respuesta["mensaje"] = "La fecha tiene que ser posterior a la del día de hoy";
+                    }
+                    $referencia->fin_descuento = $valido["fecha"];
+                }
+                
+                if($valido["descuento"] >= $referencia->precio){
+                    $respuesta["mensaje"] = "El descuento supera al precio del producto";
+                }
+                
+                $referencia->descuento = $valido["descuento"];
+                
+                if($respuesta["mensaje"] == "ok"){
+                    $referencia->save();
+                }else{
+                    $respuesta["resultado"] = 0;
+                }
+            }catch(\Exception $e){
+                $respuesta["mensaje"] = 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"");
+                $respuesta["resultado"] = 0;
+            }
+
+        }
+
+
+
+        return response()->json($respuesta);
     }
 }
