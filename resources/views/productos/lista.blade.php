@@ -35,12 +35,18 @@
 				</div>
 				<div class="col-12 col-sm-4 mb-2">
 					<select class="form-select" id="filtroMarca">
-						<option>Marca</option>
+						<option value="">Marca</option>
+						@foreach($marcas as $marca)
+							<option>{{$marca->nombre}}</option>
+						@endforeach
 					</select>
 				</div>
 				<div class="col-12 col-sm-4 mb-2">
 					<select class="form-select" id="filtroCategoria">
-						<option>Categoría</option>
+						<option value="">Categoría</option>
+						@foreach($categorias as $categoria)
+							<option>{{$categoria->subcategoria}} - {{$categoria->subsubcategoria}}</option>
+						@endforeach
 					</select>
 				</div>
 			</div>
@@ -54,6 +60,9 @@
 						<option value="-1">Inactivos</option>
 						<option value="2">Todos</option>
 					</select>
+				</div>
+				<div class="col-12 col-sm-4 mb-2">
+					<button class="btn btn-primary" onclick="limpiarFiltros()">Limpiar</button>
 				</div>
 			</div>
 		</div>
@@ -133,15 +142,34 @@
 	];
 	let datosVisibles = [];
 	//Aplicar filtros
+	filtroNombre.oninput = pintarTabla;
+	filtroMarca.onchange = pintarTabla;
+	filtroCategoria.onchange = pintarTabla;
+	filtroCodigo.oninput = pintarTabla;
 	filtroEstado.onchange = pintarTabla;
 
 	function aplicarFiltros(){
 		datosVisibles = [];
-		//Nombre, marca, categoría, código
 		for(let producto of datos){
 			let visible = true;
+			//Filtro de nombre
+			if(filtroNombre.value && !producto.nombre.includes(filtroNombre.value)){
+				visible = false;
+			}
+			//Filtro de marca
+			else if(filtroMarca.value && producto.marca!=filtroMarca.value){
+				visible = false;
+			}
+			//Filtro de categoría
+			else if(filtroCategoria.value && producto.categoria!=filtroCategoria.value){
+				visible = false;
+			}
+			//Filtro de código
+			else if(filtroCodigo.value && !producto.codigo.includes(filtroCodigo.value)){
+				visible = false;
+			}
 			//Filtro de estado
-			if((filtroEstado.value=='1'&&producto.estado!=1) || (filtroEstado.value=='-1'&&producto.estado==1)){
+			else if((filtroEstado.value=='1'&&producto.estado!=1) || (filtroEstado.value=='-1'&&producto.estado==1)){
 				visible = false;
 			}
 
@@ -149,6 +177,15 @@
 				datosVisibles.push(producto);
 			}
 		}
+	}
+
+	function limpiarFiltros(){
+		filtroNombre.value="";
+		filtroMarca.value="";
+		filtroCategoria.value="";
+		filtroCodigo.value="";
+		filtroEstado.value="1";
+		pintarTabla();
 	}
 	
 	//Ordenar tabla

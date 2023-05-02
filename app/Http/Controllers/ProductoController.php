@@ -174,7 +174,8 @@ class ProductoController extends Controller
         $referencias = Referencia::with(['producto','producto.fotos'=>function ($query) {
             $query->where('principal', 1);
         },'producto.subsubcategoria.subcategoria','producto.marca'])->where('tienda_id',Auth::id())->get();
-
-        return view('productos.lista',["referencias"=>$referencias]);
+        $marcas = DB::table('marcas')->join('productos','marcas.id','=','productos.marca_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('marcas.nombre')->orderBy('marcas.nombre','asc')->groupBy('marcas.nombre')->get();
+        $categorias = DB::table('subsubcategorias')->join('subcategorias','subcategorias.id','=','subsubcategorias.subcategoria_id')->join('productos','subsubcategorias.id','=','productos.subsubcategoria_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('subsubcategorias.nombre as subsubcategoria','subcategorias.nombre as subcategoria')->orderBy('subcategorias.nombre','asc')->groupBy('subsubcategorias.nombre')->get();
+        return view('productos.lista',["referencias"=>$referencias,"marcas" => $marcas,"categorias" => $categorias]);
     }
 }
