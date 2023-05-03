@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function(){
 		Route::post('/aplicar-descuento-masivo',[\App\Http\Controllers\ProductoController::class,'aplicarDescuentoMasivo'])->name("aplicar-descuento-masivo");
 		Route::post('/quitar-descuento',[\App\Http\Controllers\ProductoController::class,'quitarDescuento'])->name("quitar-descuento");
 		Route::post('/cambiar-estado',[\App\Http\Controllers\ProductoController::class,'cambiarEstado'])->name("cambiar-estado");
+		Route::get('/editar/{id}',[\App\Http\Controllers\ProductoController::class,'editar'])->name("editar-producto");
+		Route::post('/modificar',[\App\Http\Controllers\ProductoController::class,'modificar'])->name("modificar-producto");
 
 	});
 	

@@ -393,10 +393,13 @@
 				fila.append(celdaEstado);
 
 				let celdaAccion = document.createElement("td");
-				let botonEditar = document.createElement("button");
+				let botonEditar = document.createElement("a");
 				botonEditar.classList.add("btn");
 				botonEditar.classList.add("btn-secondary");
 				botonEditar.innerText = "Editar";
+				botonEditar.href = '{{route('editar-producto',["id"=>"fake"])}}'.replace("fake",producto.id);
+
+
 				celdaAccion.append(botonEditar);
 				fila.append(celdaAccion);
 

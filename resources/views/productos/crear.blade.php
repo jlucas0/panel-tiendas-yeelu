@@ -275,7 +275,6 @@
           <p class="form-text">Rellena este campo si deseas restringir el máximo de unidades de este producto por pedido.</p>
         </div>
         <div class="mb-3 text-center">
-          <button class="btn btn-danger me-4">Borrar</button>
           <button type="submit" class="btn btn-primary">Actualizar</button>
         </div>
       </form>

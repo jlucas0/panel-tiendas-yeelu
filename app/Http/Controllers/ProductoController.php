@@ -155,7 +155,7 @@ class ProductoController extends Controller
             $referencia->codigo = $valido['codigo'];
             $referencia->precio = $valido['precio'];
             if(isset($valido['maximo'])){
-                $referencia->maximo = $valido['maximo'];
+                $referencia->maximo_venta = $valido['maximo'];
             }
             $referencia->disponible = true;
             $referencia->producto_id = $productoId;
@@ -170,7 +170,62 @@ class ProductoController extends Controller
     
     }
 
-    //EDITAR con descuento
+    public function editar($id){
+        $referencia = Referencia::find($id);
+
+        if(!$referencia || $referencia->tienda_id!=Auth::id()){
+            return back()->withErrors(["warning"=>"Producto no encontrado"]);
+        }
+
+        return view('productos.editar',["referencia"=>$referencia]);
+    }
+
+    public function modificar(Request $request){
+        $validaciones = [
+            "id" => ['required','exists:referencias,id'],
+            "codigo" => ['required','max:150',Rule::unique('referencias')->where(fn ($query) => $query->where('tienda_id', Auth::id())->where('id','<>',$request->id))],
+            "precio" => ['required','min:0','numeric'],
+            "maximo" => ['nullable','min:1','numeric'],
+        ];
+        $textos = [
+            "id.required" => "Referencia no especificada",
+            "id.exists" => "La referencia no existe",
+            "codigo.required" => "Campo obligatorio",
+            "codigo.max" => "Máximo 150 caracteres",
+            "codigo.unique" => "Ya existe el código",
+            "precio.min" => "El valor mínimo es 0",
+            "precio.required" => "Campo obligatorio",
+            "precio.numeric" => "Debe ser un número válido",
+            "maximo.min" => "El valor mínimo es 1",
+            "maximo.numeric" => "Debe ser un número válido" 
+        ];
+
+        $valido = $request->validate($validaciones,$textos);
+
+        try{
+
+            $referencia = Referencia::find($valido["id"]);
+            //Validar también que se está intentando modificar un producto correcto
+            if($referencia->tienda_id!=Auth::id()){
+                return back()->withErrors(["warning"=>"Intento de modificación no permitido"]);
+            }
+            
+
+            $referencia->codigo = $valido['codigo'];
+            if(!$referencia->descuento){
+                $referencia->precio = $valido['precio'];
+            }
+            if(isset($valido['maximo'])){
+                $referencia->maximo_venta = $valido['maximo'];
+            }
+            $referencia->save();
+            return redirect('productos')->withErrors(['success' => "Producto modificado"]);
+        }catch(\Exception $e){
+            return back()->withErrors([
+                'danger' => 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"")
+            ]);
+        }
+    }
 
     public function listar(){
 
