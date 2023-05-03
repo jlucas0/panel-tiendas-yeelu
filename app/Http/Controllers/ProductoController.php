@@ -243,4 +243,94 @@ class ProductoController extends Controller
 
         return response()->json($respuesta);
     }
+
+    public function quitarDescuento(Request $request){
+        $respuesta = ["resultado"=>1,"mensaje"=>"ok"];
+        
+
+        $validator = Validator::make($request->all(), [
+            "id" => ["required","exists:referencias,id"]
+        ],[
+            'id.required' => 'No se ha especificado el producto',
+            'id.exists' => 'No se ha encontrado el producto'
+        ]);
+ 
+        if ($validator->fails()) {
+            $respuesta["resultado"] = 0;
+            $respuesta["mensaje"] = "Debes corregir los siguientes errores:";
+            foreach($validator->errors()->all() as $error){
+                $respuesta["mensaje"] .= "<br>$error";
+            }
+        }
+        else{
+            try{
+                $valido = $validator->validated();
+                $referencia = Referencia::find($valido['id']);
+                $referencia->fin_descuento = null;
+                $referencia->descuento = null;
+                $referencia->save();
+            }catch(\Exception $e){
+                $respuesta["mensaje"] = 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"");
+                $respuesta["resultado"] = 0;
+            }
+
+        }
+        return response()->json($respuesta);
+    }
+
+    public function aplicarDescuentoMasivo(Request $request){
+        $respuesta = ["resultado"=>1,"mensaje"=>"ok"];
+    
+        $validator = Validator::make($request->all(), [
+            "ids.*" => ["required","exists:referencias,id"],
+            "descuento" => ["required","numeric","min:1"],
+            "fecha" => ["nullable","date"],
+        ],[
+            'ids.required' => 'No se ha especificado el producto',
+            'ids.exists' => 'No se ha encontrado el producto',
+            'descuento.required' => 'No se ha indicado el descuento',
+            'descuento.numeric' => 'El importe no es un número válido',
+            'descuento.min' => 'El descuento es demasiado bajo',
+            'fecha.date' => 'La fecha no tiene un formato válido',
+        ]);
+ 
+        if ($validator->fails()) {
+            $respuesta["resultado"] = 0;
+            $respuesta["mensaje"] = "Debes corregir los siguientes errores:";
+            foreach($validator->errors()->all() as $error){
+                $respuesta["mensaje"] .= "<br>$error";
+            }
+        }
+        else{
+            try{
+                $valido = $validator->validated();
+                //Validar además que fecha sea mayor a hoy y descuento menor a precio base del producto
+                if(isset($valido["fecha"])){
+                    $hoy = new \DateTime();
+                    $fechaFin = new \DateTime($valido["fecha"]);
+                    if($fechaFin<$hoy){
+                        $respuesta["mensaje"] = "La fecha tiene que ser posterior a la del día de hoy";
+                    }
+                }
+                
+                if($respuesta["mensaje"] == "ok"){
+                    $update = ['descuento' => DB::raw('`precio`*'.$valido['descuento']/100)];
+                    if(isset($valido["fecha"])){
+                        $update['fin_descuento']=$valido["fecha"];
+                    }
+                    $update["updated_at"] = new \DateTime();
+                    DB::table('referencias')
+                      ->whereIn('id', $valido['ids'])
+                      ->update($update);
+                }else{
+                    $respuesta["resultado"] = 0;
+                }
+            }catch(\Exception $e){
+                $respuesta["mensaje"] = 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"");
+                $respuesta["resultado"] = 0;
+            }
+
+        }
+        return response()->json($respuesta);
+    }
 }
