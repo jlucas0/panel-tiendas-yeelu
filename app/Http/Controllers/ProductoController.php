@@ -333,4 +333,42 @@ class ProductoController extends Controller
         }
         return response()->json($respuesta);
     }
+
+    public function cambiarEstado(Request $request){
+        $respuesta = ["resultado"=>1,"mensaje"=>"ok"];
+        
+
+        $validator = Validator::make($request->all(), [
+            "id" => ["required","exists:referencias,id"]
+        ],[
+            'id.required' => 'No se ha especificado el producto',
+            'id.exists' => 'No se ha encontrado el producto'
+        ]);
+ 
+        if ($validator->fails()) {
+            $respuesta["resultado"] = 0;
+            $respuesta["mensaje"] = "Debes corregir los siguientes errores:";
+            foreach($validator->errors()->all() as $error){
+                $respuesta["mensaje"] .= "<br>$error";
+            }
+        }
+        else{
+            try{
+                $valido = $validator->validated();
+                $referencia = Referencia::find($valido['id']);
+                if($referencia->disponible){
+                    $referencia->disponible = 0;
+                }else{
+                    $referencia->disponible = 1;
+                }
+                $referencia->save();
+                $respuesta["mensaje"] = $referencia->disponible;
+            }catch(\Exception $e){
+                $respuesta["mensaje"] = 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"");
+                $respuesta["resultado"] = 0;
+            }
+
+        }
+        return response()->json($respuesta);
+    }
 }

@@ -173,7 +173,7 @@
 	//Cargar datos
 		let datos = [
 			@foreach($referencias as $referencia)
-				{"id":{{$referencia->id}},"codigo":"{{$referencia->codigo}}","foto":"@if(count($referencia->producto->fotos)){{$referencia->producto->fotos[0]->direccion}}@endif","nombre":"{{$referencia->producto->nombre}}","precio":{{$referencia->precio}},"descuento":@if($referencia->descuento){{$referencia->descuento}}@else""@endif,"tieneDescuento":@if($referencia->descuento){{1}}@else{{0}}@endif,"finDescuento":"{{$referencia->fin_descuento}}","categoria":"{{$referencia->producto->subsubcategoria->subcategoria->nombre.' - '.$referencia->producto->subsubcategoria->nombre}}","marca":"{{$referencia->producto->marca->nombre}}","estado":@if($referencia->disponible && $referencia->producto->confirmado){{1}}@elseif($referencia->disponible && !$referencia->producto->confirmado){{-1}}@else{{0}}@endif,"visitas":{{$referencia->visitas}}},
+				{"id":{{$referencia->id}},"codigo":"{{$referencia->codigo}}","foto":"@if(count($referencia->producto->fotos)){{$referencia->producto->fotos[0]->direccion}}@endif","nombre":"{{$referencia->producto->nombre}}","precio":{{$referencia->precio}},"descuento":@if($referencia->descuento){{$referencia->descuento}}@else""@endif,"tieneDescuento":@if($referencia->descuento){{1}}@else{{0}}@endif,"finDescuento":"{{$referencia->fin_descuento}}","categoria":"{{$referencia->producto->subsubcategoria->subcategoria->nombre.' - '.$referencia->producto->subsubcategoria->nombre}}","marca":"{{$referencia->producto->marca->nombre}}","estado":@if(!$referencia->producto->confirmado){{-1}}@elseif($referencia->disponible){{1}}@else{{0}}@endif,"visitas":{{$referencia->visitas}}},
 			@endforeach
 		];
 		let datosVisibles = [];
@@ -374,6 +374,8 @@
 	      let checkEstado = document.createElement("input");
 	      checkEstado.type = "checkbox";
 	      checkEstado.classList.add("form-check-control");
+	      checkEstado.dataset.indice = indice;
+	      checkEstado.onclick = cambiarEstado;
 	      if(producto.estado == 1){
 					checkEstado.checked = true;
 					celdaEstado.append(checkEstado);				
@@ -603,6 +605,30 @@
 		}
 
 	//Activar/Desactivar producto
+
+		function cambiarEstado(evento){
+			var formData = new FormData();
+	    formData.append('id', datosVisibles[evento.target.dataset.indice].id);
+  		postData('{{route('cambiar-estado')}}',formData).then((data)=>{
+	      //Si es OK
+	      if(data.resultado){
+	        //Actualizar el producto seleccionado en la tabla
+	        for(let i = 0; i < datos.length; i++){
+	        	if(datos[i].id == datosVisibles[evento.target.dataset.indice].id){
+	        		datos[i].estado = data.mensaje;
+	        		break;
+	        	}
+	        }
+	        //Repintar la tabla
+	        pintarTabla();
+	      }
+	      //Si no, pintar alert de error
+	      else{
+	        alert(data.mensaje);
+	      }
+	    });
+
+		}
 
 	//Función POST AJAX
 		async function postData(ruta,datos){
