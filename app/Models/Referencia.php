@@ -12,4 +12,8 @@ class Referencia extends Model
     public function producto(){
         return $this->belongsTo(Producto::class);
     }
+
+    public function pedidos(){
+        return $this->belongsToMany(Pedido::class,'linea_pedidos');
+    }
 }

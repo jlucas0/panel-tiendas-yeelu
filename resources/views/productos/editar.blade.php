@@ -39,9 +39,18 @@
           <p class="form-text">Rellena este campo si deseas restringir el máximo de unidades de este producto por pedido.</p>
         </div>
         <div class="mb-3 text-center">
-          <button class="btn btn-danger me-4">Borrar</button>
+          <button id="botonBorrar" class="btn btn-danger me-4">Borrar</button>
           <button type="submit" class="btn btn-primary">Actualizar</button>
         </div>
       </form>
     </main>
 </x-layout>
+<script type="text/javascript">
+  botonBorrar.onclick = borrar;
+  function borrar(ev){
+    ev.preventDefault();
+    if(confirm("¿Deseas borrar el producto?")){
+      window.location = '{{route('borrar-producto',["id"=>$referencia->id])}}'
+    }
+  }
+</script>

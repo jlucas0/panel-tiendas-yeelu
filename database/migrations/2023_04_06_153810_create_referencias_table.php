@@ -23,6 +23,7 @@ return new class extends Migration
             $table->bigInteger("visitas")->unsigned()->default(0);
             $table->integer("maximo_venta")->nullable()->unsigned();
             $table->boolean("disponible");
+            $table->boolean("borrado")->default(false);
             $table->foreignId("producto_id")->constrained();
             $table->foreignId("tienda_id")->constrained();
             $table->timestamps();

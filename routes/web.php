@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function(){
 		Route::post('/cambiar-estado',[\App\Http\Controllers\ProductoController::class,'cambiarEstado'])->name("cambiar-estado");
 		Route::get('/editar/{id}',[\App\Http\Controllers\ProductoController::class,'editar'])->name("editar-producto");
 		Route::post('/modificar',[\App\Http\Controllers\ProductoController::class,'modificar'])->name("modificar-producto");
+		Route::get('/borrar/{id}',[\App\Http\Controllers\ProductoController::class,'borrar'])->name("borrar-producto");
 
 	});
 	

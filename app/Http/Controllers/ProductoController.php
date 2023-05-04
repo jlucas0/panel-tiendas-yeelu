@@ -149,6 +149,10 @@ class ProductoController extends Controller
             }
             else{
                 $productoId = $valido['seleccionado'];
+                //Verificar que no está ya en el catálogo
+                if(Referencia::where('producto_id',$productoId)->where('tienda_id',Auth::id())->where('borrado',0)->first()){
+                    return back()->withErrors(["seleccionado"=>"El producto ya está en tu catálogo"]);
+                }
             }
 
             $referencia = new Referencia();
@@ -231,10 +235,31 @@ class ProductoController extends Controller
 
         $referencias = Referencia::with(['producto','producto.fotos'=>function ($query) {
             $query->where('principal', 1);
-        },'producto.subsubcategoria.subcategoria','producto.marca'])->where('tienda_id',Auth::id())->get();
+        },'producto.subsubcategoria.subcategoria','producto.marca'])->where('tienda_id',Auth::id())->where('borrado',0)->get();
         $marcas = DB::table('marcas')->join('productos','marcas.id','=','productos.marca_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('marcas.nombre')->orderBy('marcas.nombre','asc')->groupBy('marcas.nombre')->get();
         $categorias = DB::table('subsubcategorias')->join('subcategorias','subcategorias.id','=','subsubcategorias.subcategoria_id')->join('productos','subsubcategorias.id','=','productos.subsubcategoria_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('subsubcategorias.nombre as subsubcategoria','subcategorias.nombre as subcategoria')->orderBy('subcategorias.nombre','asc')->groupBy('subsubcategorias.nombre')->get();
         return view('productos.lista',["referencias"=>$referencias,"marcas" => $marcas,"categorias" => $categorias]);
+    }
+
+    public function borrar($id){
+        try{
+            $referencia = Referencia::find($id);
+            if($referencia){
+                if($referencia->pedidos){
+                    $referencia->borrado = true;
+                    $referencia->save();
+                }else{
+                    $referencia->delete();
+                }
+                return redirect(route('productos'))->withErrors(["success"=>"Producto eliminado"]);
+            }else{
+                return back()->withErrors(["warning"=>"No encontrado"]);
+            }
+        }catch(\Exception $e){
+            return back()->withErrors([
+                'danger' => 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"")
+            ]);
+        }
     }
 
     //Funciones AJAX

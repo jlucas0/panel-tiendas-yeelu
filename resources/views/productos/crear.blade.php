@@ -60,7 +60,7 @@
         <div class="tab-content" id="tabContent">
           <div class="tab-pane fade @if(!old('accion') || old('accion')=='buscar') show active  @endif" id="buscar-tab-contenido" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
             <div id="autocompletar">
-              <input type="text" id="buscador" class="form-control @error('seleccionado') is-invalid @enderror" placeholder="Escribe el nombre, marca o referencia">
+              <input type="text" id="buscador" class="form-control @error('seleccionado') is-invalid @enderror" placeholder="Escribe el nombre, marca o referencia" autocomplete="off">
               <input type="hidden" name="seleccionado" id="seleccionado">
               <div class="invalid-feedback">
                 @error('seleccionado'){{$message}}@enderror
