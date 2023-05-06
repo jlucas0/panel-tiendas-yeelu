@@ -19,9 +19,8 @@ return new class extends Migration
             $table->string("ref_pago",250);
             $table->float("envio")->unsigned();
             $table->float("descuento")->unsigned()->nullable();
-            $table->boolean("completado")->default(false);
             $table->text("observaciones")->nullable();
-            $table->enum("estado",['pendiente','aceptado','preparado','enviado','entregado'])->nullable();
+            $table->enum("estado",['pendiente','aceptado','preparado','enviado','completado','cancelado'])->default('pendiente');
             $table->foreignId("cliente_id")->constrained();
             $table->foreignId("tienda_id")->constrained();
             $table->timestamps();

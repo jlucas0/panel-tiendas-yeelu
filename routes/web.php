@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function(){
 	
 	Route::prefix('/pedidos')->group(function(){
 		Route::get('/',[\App\Http\Controllers\PedidoController::class,'listar'])->name("pedidos");
+		Route::get('/cargar',[\App\Http\Controllers\PedidoController::class,'cargar'])->name("cargar-pedidos");
 		Route::get('/{id}',[\App\Http\Controllers\PedidoController::class,'ver'])->name("pedido");
 	});
 	Route::redirect('/', '/pedidos');

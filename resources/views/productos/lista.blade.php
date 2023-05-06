@@ -180,16 +180,16 @@
 	
 	//Mostrar/ocultar filtros
 		filtros.onclick = ()=>{
-		let altura = panelFiltros.children[0].offsetHeight + panelFiltros.children[1].offsetHeight;
-		if(filtros.classList.contains('abierto')){
-			filtros.classList.remove('abierto');
-			panelFiltros.style.height = 0;
-		}else{
-			filtros.classList.add('abierto');
-			panelFiltros.classList.add('abierto');
-			panelFiltros.style.height = altura+'px';
+			let altura = panelFiltros.children[0].offsetHeight + panelFiltros.children[1].offsetHeight;
+			if(filtros.classList.contains('abierto')){
+				filtros.classList.remove('abierto');
+				panelFiltros.style.height = 0;
+			}else{
+				filtros.classList.add('abierto');
+				panelFiltros.classList.add('abierto');
+				panelFiltros.style.height = altura+'px';
+			}
 		}
-	}
 	
 	//Aplicar filtros
 		filtroNombre.oninput = pintarTabla;
