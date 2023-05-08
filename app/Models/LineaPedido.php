@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LineaPedido extends Model
 {
     use HasFactory;
+
+    public function referencia(){
+        return $this->belongsTo(Referencia::class);
+    }
 }

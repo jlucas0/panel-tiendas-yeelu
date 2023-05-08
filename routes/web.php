@@ -50,5 +50,9 @@ Route::middleware('auth')->group(function(){
 	});
 	Route::redirect('/', '/pedidos');
 
+	Route::prefix('/incidencias')->group(function(){
+		Route::post('/registrar',[\App\Http\Controllers\IncidenciaController::class,'registrar'])->name("registrar-incidencia");
+	});
+
 
 });

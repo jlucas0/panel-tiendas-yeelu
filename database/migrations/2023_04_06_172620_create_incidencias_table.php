@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum("estado",["pendiente","resuelta"])->default("pendiente");
             $table->enum("motivo",["stock","otro"]);
             $table->text("observaciones");
+            $table->text("solucion")->nullable();
             $table->foreignId("pedido_id")->constrained();
             $table->timestamps();
         });

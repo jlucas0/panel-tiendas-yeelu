@@ -16,7 +16,11 @@ class PedidoController extends Controller
     }
 
     public function ver($id){
-        return view('pedidos.ver');
+        $pedido = Pedido::with(['incidencias','lineaPedido','lineaPedido.referencia','lineaPedido.referencia.producto','lineaPedido.referencia.producto.marca'])->find($id);
+        if(!$pedido || $pedido->tienda_id!=Auth::id()){
+            return back()->withErrors(["warning"=>"Pedido no encontrado"]);
+        }
+        return view('pedidos.ver',["pedido"=>$pedido,"incidenciasPendientes"=>$pedido->incidencias()->where('estado','pendiente')->get()]);
     }
 
     //Función AJAX
