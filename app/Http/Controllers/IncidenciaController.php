@@ -44,7 +44,7 @@ class IncidenciaController extends Controller
             $incidencia->observaciones = $valido["informacion"];
             $incidencia->pedido_id = $valido["pedido"];
             $incidencia->save();
-            //Avisar por email
+            //TODO: Avisar por email
             
             return back()->withErrors(['success' => "Incidencia registrada. Recibirás respuesta lo antes posible."]);
         }catch(\Exception $e){

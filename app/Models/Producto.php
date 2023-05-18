@@ -13,8 +13,8 @@ class Producto extends Model
         return $this->belongsTo(Marca::class);
     }
 
-    public function subsubcategoria(){
-        return $this->belongsTo(Subsubcategoria::class);
+    public function categoria(){
+        return $this->belongsTo(Categoria::class);
     }
 
     public function etiquetas(){

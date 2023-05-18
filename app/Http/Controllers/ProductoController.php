@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Referencia;
 use App\Models\Marca;
+use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\Foto;
 use App\Models\GrupoEtiqueta;
@@ -19,7 +20,9 @@ class ProductoController extends Controller
     public function crear(){
 
         $marcas = Marca::where('tienda_id',null)->orWhere('tienda_id',Auth::id())->orderBy('nombre','asc')->get();
-        $categorias = DB::table('subsubcategorias')->select('subsubcategorias.id','subsubcategorias.nombre','subcategorias.nombre as subcategoria')->join('subcategorias','subcategoria_id','=','subcategorias.id')->orderBy('subcategorias.nombre','asc')->orderBy('subsubcategorias.nombre','asc')->get();
+        
+        $categorias = Categoria::with(['categorias','categorias.categorias'])->whereNull('categoria_id')->get();
+
         $productos = Producto::with('marca')->where('confirmado',1)->get();
         $etiquetas = GrupoEtiqueta::with('etiquetas')->get();
         return view('productos.crear',["marcas" => $marcas,"categorias" => $categorias,"productos"=>$productos,"etiquetas"=>$etiquetas]);
@@ -55,7 +58,7 @@ class ProductoController extends Controller
             $validaciones["nombre"] = ['required','max:200'];
             $textos["nombre.required"] = "Campo obligatorio";
             $textos["nombre.max"] = "Texto demasiado largo";
-            $validaciones["categoria"] = ['required','exists:subsubcategorias,id'];
+            $validaciones["categoria"] = ['required','exists:categorias,id'];
             $textos["categoria.required"] = "Campo obligatorio";
             $textos["categoria.exists"] = "Elige una categoría válida";
             $validaciones["marca"] = ['required','exists:marcas,id'];
@@ -124,7 +127,7 @@ class ProductoController extends Controller
                 }
                 $producto->confirmado = false;
                 $producto->marca_id = $valido["marca"];
-                $producto->subsubcategoria_id = $valido["categoria"];
+                $producto->categoria_id = $valido["categoria"];
                 $producto->save();
                 $productoId = $producto->id;
                 //Sus fotos
@@ -235,9 +238,67 @@ class ProductoController extends Controller
 
         $referencias = Referencia::with(['producto','producto.fotos'=>function ($query) {
             $query->where('principal', 1);
-        },'producto.subsubcategoria.subcategoria','producto.marca'])->where('tienda_id',Auth::id())->where('borrado',0)->get();
+        },'producto.categoria', 'producto.categoria.categoria','producto.categoria.categoria.categoria','producto.marca'])->where('tienda_id',Auth::id())->where('borrado',0)->get();
         $marcas = DB::table('marcas')->join('productos','marcas.id','=','productos.marca_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('marcas.nombre')->orderBy('marcas.nombre','asc')->groupBy('marcas.nombre')->get();
-        $categorias = DB::table('subsubcategorias')->join('subcategorias','subcategorias.id','=','subsubcategorias.subcategoria_id')->join('productos','subsubcategorias.id','=','productos.subsubcategoria_id')->join('referencias','productos.id','=','referencias.producto_id')->where('referencias.tienda_id',Auth::id())->select('subsubcategorias.nombre as subsubcategoria','subcategorias.nombre as subcategoria')->orderBy('subcategorias.nombre','asc')->groupBy('subsubcategorias.nombre')->get();
+
+        //Categorías asociadas a los productos para luego filtrar
+        $categorias = [];
+
+        foreach($referencias as $referencia){
+            //Ver de qué nivel es la categoría del producto
+            if($referencia->producto->categoria->categoria_id){//Subcategoría o subsubcategoría
+                if($referencia->producto->categoria->categoria->categoria_id){//Subsubcategoría
+                    
+                    if(!isset($categorias[$referencia->producto->categoria->categoria->categoria->id])){//Categoría base no registrada
+                        $categorias[$referencia->producto->categoria->categoria->categoria->id] = [
+                            "nombre" => $referencia->producto->categoria->categoria->categoria->nombre,
+                            "subcategorias" => [
+                                $referencia->producto->categoria->categoria->id => [
+                                    "nombre" => $referencia->producto->categoria->categoria->nombre,
+                                    "subsubcategorias" => [
+                                        $referencia->producto->categoria->id => $referencia->producto->categoria->nombre
+                                    ]
+                                ]
+                            ]
+                        ];
+                    }
+                    else if(!isset($categorias[$referencia->producto->categoria->categoria->categoria->id]["subcategorias"][$referencia->producto->categoria->categoria->id])){//Subcategoría no registrada
+                        $categorias[$referencia->producto->categoria->categoria->categoria->id]["subcategorias"][$referencia->producto->categoria->categoria->id] = [
+                                "nombre" => $referencia->producto->categoria->categoria->nombre,
+                                "subsubcategorias" => [
+                                    $referencia->producto->categoria->id => $referencia->producto->categoria->nombre
+                                ]
+                            ];
+                    }
+                    else if(!isset($categorias[$referencia->producto->categoria->categoria->categoria->id]["subcategorias"][$referencia->producto->categoria->categoria->id]["subsubcategorias"][$referencia->producto->categoria->id])){//Solo subsubcategoría no registrada
+                        $categorias[$referencia->producto->categoria->categoria->categoria->id]["subcategorias"][$referencia->producto->categoria->categoria->id]["subsubcategorias"][$referencia->producto->categoria->id] = $referencia->producto->categoria->nombre;
+                    }
+                }
+                else if(!isset($categorias[$referencia->producto->categoria->categoria->id])){//Categoría base no registrada
+                    $categorias[$referencia->producto->categoria->categoria->id] = [
+                        "nombre" => $referencia->producto->categoria->categoria->nombre,
+                        "subcategorias" => [
+                            $referencia->producto->categoria->id => [
+                                "nombre" => $referencia->producto->categoria->nombre,
+                                "subsubcategorias" => []
+                            ]
+                        ]
+                    ];
+                }else if(!isset($categorias[$referencia->producto->categoria->categoria->id]["subcategorias"][$referencia->producto->categoria->id])){//Solo subcategoría no registrada
+                    $categorias[$referencia->producto->categoria->categoria->id]["subcategorias"][$referencia->producto->categoria->id] = [
+                        "nombre" => $referencia->producto->categoria->nombre,
+                        "subsubcategorias" => []
+                    ];
+                }
+            }
+            else if(!isset($categorias[$referencia->producto->categoria->id])){//Categoría base no registrada
+                $categorias[$referencia->producto->categoria->id] = [
+                    "nombre" => $referencia->producto->categoria->nombre,
+                    "subcategorias" => []
+                ];
+            }
+        }
+        
         return view('productos.lista',["referencias"=>$referencias,"marcas" => $marcas,"categorias" => $categorias]);
     }
 

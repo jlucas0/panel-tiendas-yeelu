@@ -17,7 +17,6 @@ return new class extends Migration
         Schema::create('etiquetas', function (Blueprint $table) {
             $table->id();
             $table->string("nombre",50)->unique();
-            $table->string("icono",50);
             $table->foreignId("grupo_etiqueta_id")->constrained();
         });
     }

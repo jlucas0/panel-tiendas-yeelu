@@ -82,7 +82,13 @@
               <select class="form-select @error('categoria') is-invalid @enderror" name="categoria" id="categoria">
                 <option></option>
                 @foreach($categorias as $categoria)
-                  <option value="{{$categoria->id}}" @if(old('categoria')&& old('categoria') == $categoria->id) selected @endif>{{$categoria->subcategoria}} - {{$categoria->nombre}}</option>
+                  <option value="{{$categoria->id}}" style="font-weight:bold" @if(old('categoria')&& old('categoria') == $categoria->id) selected @endif>{{$categoria->nombre}}</option>
+                  @foreach($categoria->categorias as $subcategoria)
+                    <option value="{{$subcategoria->id}}" @if(old('categoria')&& old('categoria') == $subcategoria->id) selected @endif>{{$subcategoria->nombre}}</option>
+                    @foreach($subcategoria->categorias as $subsubcategoria)
+                      <option value="{{$subsubcategoria->id}}" @if(old('categoria')&& old('categoria') == $subsubcategoria->id) selected @endif>- {{$subsubcategoria->nombre}}</option>
+                    @endforeach
+                  @endforeach
                 @endforeach
               </select>
               <div class="invalid-feedback">
@@ -275,7 +281,7 @@
           <p class="form-text">Rellena este campo si deseas restringir el máximo de unidades de este producto por pedido.</p>
         </div>
         <div class="mb-3 text-center">
-          <button type="submit" class="btn btn-primary">Actualizar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
     </main>

@@ -55,8 +55,14 @@
 					<select class="form-select" id="filtroCategoria">
 						<option value="">Categoría</option>
 						@foreach($categorias as $categoria)
-							<option>{{$categoria->subcategoria}} - {{$categoria->subsubcategoria}}</option>
-						@endforeach
+              <option value="1{{$categoria['nombre']}}" style="font-weight:bold">{{$categoria['nombre']}}</option>
+              @foreach($categoria['subcategorias'] as $subcategoria)
+                <option value="2{{$subcategoria['nombre']}}">{{$subcategoria['nombre']}}</option>
+                @foreach($subcategoria['subsubcategorias'] as $subsubcategoria)
+                  <option value="3{{$subsubcategoria}}">- {{$subsubcategoria}}</option>
+                @endforeach
+              @endforeach
+            @endforeach
 					</select>
 				</div>
 			</div>
@@ -89,7 +95,7 @@
 				      <th scope="col" class="ordenable" data-campo="nombre">Nombre</th>
 				      <th scope="col" class="ordenable" data-campo="precio">Precio</th>
 				      <th scope="col" class="ordenable" data-campo="tieneDescuento">Descuento</th>
-				      <th scope="col" class="ordenable" data-campo="categoria">Categoría</th>
+				      <th scope="col" class="ordenable" data-campo="categoria_visible">Categoría</th>
 				      <th scope="col" class="ordenable" data-campo="marca">Marca</th>
 				      <th scope="col" class="ordenable" data-campo="visitas">Visitas</th>
 				      <th scope="col" class="ordenable" data-campo="estado">Activo</th>
@@ -173,7 +179,27 @@
 	//Cargar datos
 		let datos = [
 			@foreach($referencias as $referencia)
-				{"id":{{$referencia->id}},"codigo":"{{$referencia->codigo}}","foto":"@if(count($referencia->producto->fotos)){{$referencia->producto->fotos[0]->direccion}}@endif","nombre":"{{$referencia->producto->nombre}}","precio":{{$referencia->precio}},"descuento":@if($referencia->descuento){{$referencia->descuento}}@else""@endif,"tieneDescuento":@if($referencia->descuento){{1}}@else{{0}}@endif,"finDescuento":"{{$referencia->fin_descuento}}","categoria":"{{$referencia->producto->subsubcategoria->subcategoria->nombre.' - '.$referencia->producto->subsubcategoria->nombre}}","marca":"{{$referencia->producto->marca->nombre}}","estado":@if(!$referencia->producto->confirmado){{-1}}@elseif($referencia->disponible){{1}}@else{{0}}@endif,"visitas":{{$referencia->visitas}}},
+				{
+					"id":{{$referencia->id}},
+					"codigo":"{{$referencia->codigo}}",
+					"foto":"@if(count($referencia->producto->fotos)){{$referencia->producto->fotos[0]->direccion}}@endif",
+					"nombre":"{{$referencia->producto->nombre}}",
+					"precio":{{$referencia->precio}},
+					"descuento":@if($referencia->descuento){{$referencia->descuento}}@else""@endif,
+					"tieneDescuento":@if($referencia->descuento){{1}}@else{{0}}@endif,
+					"finDescuento":"{{$referencia->fin_descuento}}",
+					"categoria":"@if($referencia->producto->categoria->categoria_id && $referencia->producto->categoria->categoria->categoria_id){{
+						$referencia->producto->categoria->categoria->categoria->nombre
+					}}@elseif($referencia->producto->categoria->categoria_id && !$referencia->producto->categoria->categoria->categoria_id){{$referencia->producto->categoria->categoria->nombre}}@else{{$referencia->producto->categoria->nombre}}@endif",
+					"subcategoria":"@if($referencia->producto->categoria->categoria_id && $referencia->producto->categoria->categoria->categoria_id){{
+						$referencia->producto->categoria->categoria->nombre
+					}}@elseif($referencia->producto->categoria->categoria_id && !$referencia->producto->categoria->categoria->categoria_id){{$referencia->producto->categoria->nombre}}@endif",
+					"subsubcategoria":"@if($referencia->producto->categoria->categoria_id && $referencia->producto->categoria->categoria->categoria_id){{
+						$referencia->producto->categoria->nombre}}@endif",
+					"categoria_visible":"{{$referencia->producto->categoria->nombre}}",
+					"marca":"{{$referencia->producto->marca->nombre}}",
+					"estado":@if(!$referencia->producto->confirmado){{-1}}@elseif($referencia->disponible){{1}}@else{{0}}@endif,
+					"visitas":{{$referencia->visitas}}},
 			@endforeach
 		];
 		let datosVisibles = [];
@@ -211,8 +237,18 @@
 					visible = false;
 				}
 				//Filtro de categoría
-				else if(filtroCategoria.value && producto.categoria!=filtroCategoria.value){
-					visible = false;
+				else if(filtroCategoria.value){
+					let tipo = filtroCategoria.value.substr(0,1);
+					let valor = filtroCategoria.value.substr(1);
+					if(tipo==1 && valor!=producto.categoria){
+						visible = false;
+					}
+					else if(tipo==2 && valor!=producto.subcategoria){
+						visible = false;
+					}
+					else if(tipo==3 && valor!=producto.subsubcategoria){
+						visible = false;
+					}
 				}
 				//Filtro de código
 				else if(filtroCodigo.value && !producto.codigo.includes(filtroCodigo.value)){
@@ -359,7 +395,7 @@
 	      fila.append(celdaDescuento);
 
 	      let celdaCategoria = document.createElement("td");
-	      celdaCategoria.innerText = producto.categoria;
+	      celdaCategoria.innerText = producto.categoria_visible;
 	      fila.append(celdaCategoria);
 
 	      let celdaMarca = document.createElement("td");

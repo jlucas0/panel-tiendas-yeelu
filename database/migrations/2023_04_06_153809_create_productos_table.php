@@ -31,7 +31,7 @@ return new class extends Migration
             $table->float("sal")->unsigned()->nullable();
             $table->boolean("confirmado");
             $table->foreignId("marca_id")->constrained();
-            $table->foreignId("subsubcategoria_id")->constrained();
+            $table->foreignId("categoria_id")->constrained();
             $table->timestamps();
         });
     }
