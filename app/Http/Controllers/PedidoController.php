@@ -23,6 +23,37 @@ class PedidoController extends Controller
         return view('pedidos.ver',["pedido"=>$pedido,"incidenciasPendientes"=>$pedido->incidencias()->where('estado','pendiente')->get()]);
     }
 
+    public function actualizar($id){
+        try{
+            $pedido = Pedido::find($id);
+            if(!$pedido || $pedido->tienda_id!=Auth::id() || count($pedido->incidencias()->where('estado','pendiente')->get())>0){
+                return back()->withErrors(["warning"=>"Pedido no encontrado"]);
+            }
+            $mensaje = "";
+            //Actuar según estado actual
+            if($pedido->estado == 'pendiente'){
+                $pedido->estado = "aceptado";
+                $mensaje = "Pedido aceptado correctamente. Puedes preparar los productos.";
+                //TODO: Notificar cliente
+            }
+            else if($pedido->estado == 'aceptado'){
+                $pedido->estado = "preparado";
+                //TODO: Solicitar transporte
+                //TODO: Notificar cliente
+                $mensaje = "Solicitud de recogida transmitida a transportista. Imprime la etiqueta a continuación.";
+            }
+
+            $pedido->save();
+
+            return back()->withErrors(["success"=>$mensaje]);
+
+        }catch(\Exception $e){
+            return back()->withErrors([
+                'danger' => 'Se ha producido un error en el sistema.'.(config('app.env')!="production" ? " ".$e->getMessage():"")
+            ]);
+        }
+    }
+
     //Función AJAX
     public function cargar(Request $request){
         $pedidosTerminados = Pedido::where('tienda_id',Auth::id())->whereIn('estado',['completado','cancelado'])->take(20)->skip($request->inicio)->orderBy('id','desc')->get();

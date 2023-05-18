@@ -3,7 +3,11 @@
 		<div class="row">
 			<h2 class="col-9 col-md-11">Pedido #{{$pedido->id}}</h2>
 			<div class="col-3 col-md-1">
-				<a class="btn btn-secondary" href="{{route('pedidos')}}">Volver</a>
+				@if($pedido->estado == "completado" || $pedido->estado == "cancelado")
+					<button class="btn btn-secondary" onclick="window.close()">Cerrar</button>
+				@else
+					<a class="btn btn-secondary" href="{{route('pedidos')}}">Volver</a>
+				@endif
 			</div>
 		</div>
 		<div class="row my-3">
@@ -52,7 +56,7 @@
 							<td>{{$linea->cantidad}}</td>
 							<td>{{$linea->cantidad * $linea->precio_ud - $linea->descuento}} €</td>
 							@if($pedido->estado == 'aceptado')
-								<td><input type="checkbox" class="form-check-input"></td>
+								<td><input type="checkbox" id="check{{$linea->id}}" data-id="{{$linea->id}}" class="form-check-input"></td>
 							@endif
 						</tr>
 					@endforeach
@@ -64,11 +68,11 @@
 				<div class="alert alert-warning">El pedido no se puede editar hasta que se resuelva la incidencia</div>
 			@elseif($pedido->estado == 'pendiente')
 				<div class="alert alert-info">Aviso: al aceptar el pedido, se enviará notificación al cliente y debe ser preparado en un plazo adecuado de tiempo</div>
-				<button class="btn btn-primary mb-1" title="Acepta el pedido y notifica al cliente">Aceptar y preparar</button>
+				<a href="{{route('actualizar-pedido',['id'=>$pedido->id])}}" class="btn btn-primary mb-1" title="Acepta el pedido y notifica al cliente">Aceptar y preparar</a>
 				<button class="btn btn-danger ms-2 mb-1" data-bs-toggle="modal" data-bs-target="#modalIncidencia">Abrir incidencia</button>
 			@elseif($pedido->estado == 'aceptado')
 				<div class="alert alert-light">Al solicitar la recogida se generará la etiqueta para el transportista</div>
-				<button class="btn btn-primary" title="Notifica al transportista para solicitar la recogida">Solicitar recogida</button>
+				<a onclick="borrarSelecciones()" href="{{route('actualizar-pedido',['id'=>$pedido->id])}}" class="btn btn-primary" title="Notifica al transportista para solicitar la recogida">Solicitar recogida</a>
 				<button class="btn btn-danger ms-2 mt-sm-1" data-bs-toggle="modal" data-bs-target="#modalIncidencia">Abrir incidencia</button>
 			@elseif($pedido->estado == 'preparado')
 				<button class="btn btn-success">Imprimir etiqueta</button>
@@ -158,6 +162,40 @@
 					}
 				}
 				formIncidencia.submit();
+			}
+		</script>
+	@endif
+	@if($pedido->estado == 'aceptado')
+		<script type="text/javascript">
+			var referenciaStorage = "selecciones-{{$pedido->id}}";
+			var selecciones = localStorage.getItem(referenciaStorage);
+			var checks = document.getElementsByClassName('form-check-input');
+
+
+			if(selecciones){
+				selecciones = JSON.parse(selecciones);
+			}else{
+				selecciones = [];
+			}
+
+			for(let check of checks){
+				check.onchange = seleccionProducto;
+				if(selecciones.includes(check.dataset.id)){
+					check.checked = true;
+				}
+			}
+
+			function seleccionProducto(ev){
+				if(ev.target.checked){
+					selecciones.push(ev.target.dataset.id);
+				}else{
+					selecciones.splice(selecciones.indexOf(ev.target.dataset.id),1);
+				}
+				localStorage.setItem(referenciaStorage,JSON.stringify(selecciones));
+			}
+
+			function borrarSelecciones(){
+				localStorage.removeItem(referenciaStorage);
 			}
 		</script>
 	@endif
