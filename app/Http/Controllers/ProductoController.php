@@ -58,7 +58,9 @@ class ProductoController extends Controller
             $validaciones["nombre"] = ['required','max:200'];
             $textos["nombre.required"] = "Campo obligatorio";
             $textos["nombre.max"] = "Texto demasiado largo";
-            $validaciones["categoria"] = ['required','exists:categorias,id'];
+            $validaciones["categoria"] = ['required',Rule::exists('categorias','id')->where(function ($query) {
+                return $query->whereNotNull('categoria_id');
+            })];
             $textos["categoria.required"] = "Campo obligatorio";
             $textos["categoria.exists"] = "Elige una categoría válida";
             $validaciones["marca"] = ['required','exists:marcas,id'];

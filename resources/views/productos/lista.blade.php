@@ -37,13 +37,13 @@
 <x-layout>
 
 	<main class="container-lg pt-3">
-		<h3 id="filtros">Filtros <span>▼</span></h3>
-		<div id="panelFiltros">
+		<h3 id="filtros" class="abierto">Filtros <span>▼</span></h3>
+		<div id="panelFiltros" style="height:auto">
 			<div class="row">
-				<div class="col-12 col-sm-4 mb-2">
+				<div class="col-12 col-xl-3 col-lg-2 col-md-3 col-sm-4 mb-2">
 					<input type="text" class="form-control" placeholder="Nombre" id="filtroNombre">
 				</div>
-				<div class="col-12 col-sm-4 mb-2">
+				<div class="col-12 col-xl-2 col-lg-2 col-md-3 col-sm-4 mb-2">
 					<select class="form-select" id="filtroMarca">
 						<option value="">Marca</option>
 						@foreach($marcas as $marca)
@@ -51,7 +51,7 @@
 						@endforeach
 					</select>
 				</div>
-				<div class="col-12 col-sm-4 mb-2">
+				<div class="col-12 col-xl-2 col-lg-2 col-md-3 col-sm-4 mb-2">
 					<select class="form-select" id="filtroCategoria">
 						<option value="">Categoría</option>
 						@foreach($categorias as $categoria)
@@ -65,19 +65,17 @@
             @endforeach
 					</select>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-12 col-sm-4 mb-2">
+				<div class="col-12 col-xl-2 col-lg-2 col-md-3 col-sm-4 mb-2">
 					<input type="text" class="form-control" placeholder="Código" id="filtroCodigo">
 				</div>
-				<div class="col-12 col-sm-4 mb-2">
+				<div class="col-12 col-xl-2 col-lg-2 col-md-3 col-sm-4 mb-2">
 					<select class="form-select" id="filtroEstado">
 						<option value="1">Activos</option>
 						<option value="-1">Inactivos</option>
 						<option value="2">Todos</option>
 					</select>
 				</div>
-				<div class="col-12 col-sm-4 mb-2">
+				<div class="col-12 col-xl-1 col-lg-2 col-md-3 col-sm-4 mb-2">
 					<button class="btn btn-primary" onclick="limpiarFiltros()">Limpiar</button>
 				</div>
 			</div>
@@ -206,7 +204,7 @@
 	
 	//Mostrar/ocultar filtros
 		filtros.onclick = ()=>{
-			let altura = panelFiltros.children[0].offsetHeight + panelFiltros.children[1].offsetHeight;
+			let altura = panelFiltros.children[0].offsetHeight;
 			if(filtros.classList.contains('abierto')){
 				filtros.classList.remove('abierto');
 				panelFiltros.style.height = 0;
