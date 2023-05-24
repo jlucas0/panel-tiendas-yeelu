@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        //Quitar descuentos expirados
+        $schedule->command('descuentos:limpiar')->daily();
     }
 
     /**
