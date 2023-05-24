@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->smallInteger("cantidad")->unsigned();
             $table->float("precio_ud")->unsigned();
-            $table->float("descuento")->unsigned()->nullable();
+            $table->float("descuento")->unsigned()->default(0);
             $table->foreignId("pedido_id")->constrained();
             $table->foreignId("referencia_id")->constrained();
             $table->timestamps();

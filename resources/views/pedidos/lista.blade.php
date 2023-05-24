@@ -35,41 +35,48 @@
 	
 	<main class="container-lg pt-3">
 		<h3>Pedidos pendientes</h3>
-		<div class="table-responsive mt-2">
-			<table class="table table-hover table-striped">
-				<thead>
-				    <tr>
-				      <th scope="col" class="ordenable" data-campo="numero">Número</th>
-				      <th scope="col" class="ordenable" data-campo="fecha">Fecha</th>
-				      <th scope="col" class="ordenable" data-campo="precio">Importe</th>
-				      <th scope="col" class="ordenable" data-campo="estado">Estado</th>
-				      <th scope="col"></th>
-				    </tr>
-				  </thead>
-				  <tbody id="tabla">
-				    
-				  </tbody>
-			</table>
-		</div>
-		<h3 id="historial" class="mt-5">Historial <span>▼</span></h3>
-		<div id="panelHistorial">
-			<div class="list-group list-group-flush w-50" id="pedidosHistorial">
-				@foreach($terminados as $pedido)
-			  		<a href="{{route('pedido',["id"=>$pedido->id])}}" target="_blank" class="list-group-item list-group-item-action">
-			    #{{$pedido->id}} {{$pedido->created_at}} 
-				    @if($pedido->estado =='completado')
-				    <span class="badge bg-success float-end">Completado</span>
-				    @else
-				    <span class="badge bg-danger float-end">Cancelado</span>
-				    @endif
-				  </a>
-				@endforeach
+		@if(count($pendientes))
+			<div class="table-responsive mt-2">
+				<table class="table table-hover table-striped">
+					<thead>
+					    <tr>
+					      <th scope="col" class="ordenable" data-campo="numero">Número</th>
+					      <th scope="col" class="ordenable" data-campo="fecha">Fecha</th>
+					      <th scope="col" class="ordenable" data-campo="precio">Importe</th>
+					      <th scope="col" class="ordenable" data-campo="estado">Estado</th>
+					      <th scope="col"></th>
+					    </tr>
+					  </thead>
+					  <tbody id="tabla">
+					    
+					  </tbody>
+				</table>
 			</div>
-			<button class="btn btn-primary" id="botonCargar">Cargar más</button>
-		</div>
+		@else
+		<h4>No tienes pedidos pendientes</h4>
+		@endif
+		@if(count($terminados))
+			<h3 id="historial" class="mt-5">Historial <span>▼</span></h3>
+			<div id="panelHistorial">
+				<div class="list-group list-group-flush w-50" id="pedidosHistorial">
+					@foreach($terminados as $pedido)
+				  		<a href="{{route('pedido',["id"=>$pedido->id])}}" target="_blank" class="list-group-item list-group-item-action">
+				    #{{$pedido->id}} {{$pedido->created_at}} 
+					    @if($pedido->estado =='completado')
+					    <span class="badge bg-success float-end">Completado</span>
+					    @else
+					    <span class="badge bg-danger float-end">Cancelado</span>
+					    @endif
+					  </a>
+					@endforeach
+				</div>
+				<button class="btn btn-primary" id="botonCargar">Cargar más</button>
+			</div>
+		@endif
 	</main>
 
 </x-layout>
+@if(count($pendientes))
 <script type="text/javascript">
 	//Cargar datos
 		let datos = [
@@ -201,7 +208,10 @@
 		}
 
 		pintarTabla();
-
+</script>
+@endif
+@if(count($terminados))
+<script type="text/javascript">
 	//Ver historial
 		let cargados = 20;
 		historial.onclick = ()=>{
@@ -272,3 +282,4 @@
 		}
 
 </script>
+@endif
